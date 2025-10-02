@@ -1,25 +1,39 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⏰ התזכורות החכמות שלי</title>
+    <title>Tempo Divino - Lembretes Inteligentes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --dark: #1A1A2E;
+            --darker: #0F0F1B;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text: #FFFFFF;
+            --text-secondary: #C2C2D6;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--text);
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            padding-bottom: 80px;
         }
 
-        /* אנימציית רקע */
         .background-animation {
             position: fixed;
             top: 0;
@@ -30,120 +44,107 @@
             overflow: hidden;
         }
 
-        .bubble {
+        .particle {
             position: absolute;
-            bottom: -100px;
-            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            animation: rise 15s infinite ease-in;
+            background: var(--primary);
+            opacity: 0.3;
+            animation: float 15s infinite linear;
         }
 
-        @keyframes rise {
-            to {
-                bottom: 110%;
-                transform: translateX(100px);
-            }
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) translateX(100px) rotate(360deg); opacity: 0; }
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
 
         header {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             text-align: center;
-            animation: slideDown 0.5s ease-out;
+            padding: 40px 0;
+            position: relative;
+            z-index: 2;
         }
 
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background: rgba(108, 99, 255, 0.15);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--glass-border);
         }
 
         h1 {
-            color: #667eea;
-            font-size: 2.5em;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.5s ease-out;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            z-index: -1;
+            border-radius: 22px;
         }
 
-        h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.8em;
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+            font-size: 1.8rem;
         }
 
         .form-group {
@@ -153,146 +154,108 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #555;
-            font-weight: bold;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
             transition: all 0.3s;
-            font-family: inherit;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
         }
 
-        .color-picker-group {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px;
-            align-items: center;
+        textarea {
+            min-height: 100px;
+            resize: vertical;
         }
 
-        input[type="color"] {
-            width: 60px;
-            height: 50px;
-            border: none;
-            cursor: pointer;
+        .input-with-icon {
+            position: relative;
         }
 
-        .volume-control {
+        .input-with-icon i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .flex-group {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 20px;
         }
 
-        input[type="range"] {
+        .flex-group > div {
             flex: 1;
         }
 
-        .volume-value {
-            min-width: 45px;
-            text-align: center;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
             border: none;
             padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(108, 99, 255, 0.4);
         }
 
-        button:active {
-            transform: translateY(0);
+        .btn:active {
+            transform: translateY(1px);
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        .sound-library {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .sound-option {
-            padding: 15px;
-            background: #f5f5f5;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .sound-option:hover {
-            background: #e3f2fd;
-            border-color: #667eea;
-            transform: scale(1.05);
-        }
-
-        .sound-option.selected {
-            background: #667eea;
-            color: white;
-            border-color: #764ba2;
-        }
-
-        .reminder-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .reminders-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
         }
 
         .reminder-item {
-            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-right: 5px solid;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
             transition: all 0.3s;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            position: relative;
         }
 
         .reminder-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 7px 20px rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateX(5px);
         }
 
         .reminder-header {
@@ -303,867 +266,671 @@
         }
 
         .reminder-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .reminder-time {
-            font-size: 1.1em;
-            color: #667eea;
-            font-weight: bold;
+            background: rgba(108, 99, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
         }
 
-        .reminder-details {
-            color: #666;
-            margin: 5px 0;
+        .reminder-message {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
 
         .reminder-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            justify-content: flex-end;
         }
 
-        .btn-small {
+        .action-btn {
             padding: 8px 15px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
         }
 
-        .btn-delete {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        .delete-btn {
+            background: rgba(255, 101, 132, 0.2);
+            color: var(--secondary);
         }
 
-        .btn-test {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        .delete-btn:hover {
+            background: rgba(255, 101, 132, 0.3);
         }
 
-        .notification-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            z-index: 1000;
-            text-align: center;
-            min-width: 400px;
-            animation: popupAppear 0.3s ease-out forwards;
-        }
-
-        @keyframes popupAppear {
-            to {
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        .notification-popup.show {
-            display: block;
-        }
-
-        .notification-overlay {
+        .notification-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            display: none;
-            backdrop-filter: blur(5px);
-        }
-
-        .notification-overlay.show {
-            display: block;
-        }
-
-        .notification-title {
-            font-size: 2em;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .notification-message {
-            font-size: 1.2em;
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        .notification-actions {
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
-            gap: 10px;
+            align-items: center;
             justify-content: center;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            color: #666;
-            font-weight: bold;
-            border-bottom: 3px solid transparent;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
             transition: all 0.3s;
         }
 
-        .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+        .notification-modal.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .search-box {
+        .modal-content {
+            background: var(--darker);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
             position: relative;
-            margin-bottom: 15px;
+            transform: scale(0.9);
+            transition: transform 0.3s;
         }
 
-        .search-box input {
-            padding-right: 40px;
+        .notification-modal.active .modal-content {
+            transform: scale(1);
         }
 
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-message {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: var(--text);
+        }
+
+        .sound-player {
+            width: 100%;
+            margin: 25px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .snooze-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .dismiss-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .duration-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .duration-input {
+            width: 60px;
+            padding: 8px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text);
+        }
+
+        .search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+        }
+
+        .result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .result-item i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .result-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .result-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .result-artist {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #999;
+            padding: 40px 20px;
+            color: var(--text-secondary);
         }
 
-        .empty-state-icon {
-            font-size: 4em;
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--primary);
             margin-bottom: 20px;
+            opacity: 0.3;
         }
 
-        .category-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: bold;
-            margin-left: 10px;
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
-        .repeat-badge {
-            background: #4caf50;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.7em;
-            margin-right: 5px;
-        }
-
-        @media (max-width: 600px) {
-            .notification-popup {
-                min-width: 90%;
-                padding: 30px 20px;
+        @media (max-width: 768px) {
+            .flex-group {
+                flex-direction: column;
+                gap: 15px;
             }
             
             h1 {
-                font-size: 1.8em;
+                font-size: 2rem;
             }
             
-            .stats {
-                gap: 10px;
-            }
-            
-            .stat-card {
-                padding: 10px 15px;
+            .card {
+                padding: 20px;
             }
         }
-
-        .theme-selector {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .theme-option {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            cursor: pointer;
-            border: 3px solid transparent;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .theme-option:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-option.selected {
-            border-color: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-        }
-
-        .success-animation {
-            animation: successPulse 0.5s ease-out;
-        }
-
-        @keyframes successPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
     </style>
 </head>
 <body>
-    <div class="background-animation" id="backgroundAnimation"></div>
-
+    <div class="background-animation" id="particles"></div>
+    
     <div class="container">
         <header>
-            <h1>⏰ התזכורות החכמות שלי</h1>
-            <p>נהל את התזכורות שלך בצורה חכמה ויצירתית</p>
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-number" id="totalReminders">0</div>
-                    <div>תזכורות פעילות</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="todayReminders">0</div>
-                    <div>להיום</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="completedReminders">0</div>
-                    <div>הושלמו</div>
-                </div>
+            <div class="logo">
+                <i class="fas fa-bell"></i>
+                <h1>Tempo Divino</h1>
             </div>
+            <p class="subtitle">O jeito mais elegante e intuitivo de gerenciar seus lembretes importantes</p>
         </header>
-
-        <div class="main-content">
-            <div class="card">
-                <h2>➕ תזכורת חדשה</h2>
-                
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-plus-circle"></i> Novo Lembrete</h2>
+            
+            <div class="form-group">
+                <label for="reminderTitle">Título do Lembrete</label>
+                <input type="text" id="reminderTitle" placeholder="Ex: Reunião com a equipe">
+            </div>
+            
+            <div class="flex-group">
                 <div class="form-group">
-                    <label>📝 שם התזכורת</label>
-                    <input type="text" id="reminderName" placeholder="לדוגמה: לקחת תרופה">
-                </div>
-
-                <div class="form-group">
-                    <label>🕐 שעה</label>
-                    <input type="time" id="reminderTime" value="23:00">
-                </div>
-
-                <div class="form-group">
-                    <label>📅 תאריך</label>
+                    <label for="reminderDate">Data</label>
                     <input type="date" id="reminderDate">
                 </div>
-
-                <div class="form-group">
-                    <label>📂 קטגוריה</label>
-                    <select id="reminderCategory">
-                        <option value="כללי">כללי</option>
-                        <option value="עבודה">עבודה</option>
-                        <option value="בריאות">בריאות</option>
-                        <option value="משפחה">משפחה</option>
-                        <option value="לימודים">לימודים</option>
-                        <option value="ספורט">ספורט</option>
-                        <option value="אישי">אישי</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>🔄 חזרה</label>
-                    <select id="reminderRepeat">
-                        <option value="none">ללא חזרה</option>
-                        <option value="daily">כל יום</option>
-                        <option value="weekdays">ימי חול</option>
-                        <option value="weekly">כל שבוע</option>
-                        <option value="monthly">כל חודש</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>💬 הודעה מותאמת אישית</label>
-                    <textarea id="reminderMessage" rows="3" placeholder="הודעה שתופיע בהתרעה..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>🎨 צבע התזכורת</label>
-                    <div class="color-picker-group">
-                        <input type="text" id="colorName" value="סגול" readonly>
-                        <input type="color" id="reminderColor" value="#667eea">
-                    </div>
-                </div>
-
-                <div class="tabs">
-                    <button class="tab active" onclick="switchTab('builtin')">צלילים מוכנים</button>
-                    <button class="tab" onclick="switchTab('custom')">צליל מותאם</button>
-                </div>
-
-                <div id="builtin-tab" class="tab-content active">
-                    <div class="form-group">
-                        <label>🔔 בחר צליל</label>
-                        <div class="sound-library" id="soundLibrary"></div>
-                    </div>
-                </div>
-
-                <div id="custom-tab" class="tab-content">
-                    <div class="form-group">
-                        <label>🎵 חפש צליל או שיר</label>
-                        <div class="search-box">
-                            <input type="text" id="soundSearch" placeholder="חפש צליל... (לדוגמה: bell, nature, music)">
-                            <span class="search-icon">🔍</span>
-                        </div>
-                        <button onclick="searchSound()" class="btn-secondary" style="width: 100%; margin-top: 10px;">חפש</button>
-                        <div id="searchResults" style="margin-top: 15px;"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>📎 או הוסף קישור לצליל</label>
-                        <input type="url" id="customSoundUrl" placeholder="https://example.com/sound.mp3">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>🔊 עוצמת צליל: <span class="volume-value" id="volumeDisplay">70%</span></label>
-                    <div class="volume-control">
-                        <span>🔈</span>
-                        <input type="range" id="volume" min="0" max="100" value="70">
-                        <span>🔊</span>
-                    </div>
-                </div>
-
-                <button onclick="addReminder()" style="width: 100%;">✨ הוסף תזכורת</button>
-            </div>
-
-            <div class="card">
-                <h2>📋 התזכורות שלי</h2>
                 
-                <div class="search-box">
-                    <input type="text" id="filterReminders" placeholder="חפש תזכורת..." onkeyup="filterReminders()">
-                    <span class="search-icon">🔍</span>
+                <div class="form-group">
+                    <label for="reminderTime">Hora</label>
+                    <input type="time" id="reminderTime">
                 </div>
-
-                <div class="tabs">
-                    <button class="tab active" onclick="switchReminderTab('all')">הכל</button>
-                    <button class="tab" onclick="switchReminderTab('today')">היום</button>
-                    <button class="tab" onclick="switchReminderTab('upcoming')">בקרוב</button>
-                </div>
-
-                <div id="reminderList" class="reminder-list"></div>
             </div>
+            
+            <div class="form-group">
+                <label for="reminderMessage">Mensagem Personalizada</label>
+                <textarea id="reminderMessage" placeholder="Ex: Não se esqueça de trazer os documentos importantes"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="soundSearch">Buscar Música para o Lembrete</label>
+                <div class="input-with-icon">
+                    <input type="text" id="soundSearch" placeholder="Digite o nome de uma música ou artista">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Configurações do Áudio</label>
+                <div class="volume-control">
+                    <i class="fas fa-volume-up"></i>
+                    <input type="range" min="0" max="100" value="80" class="volume-slider" id="volumeControl">
+                    <span id="volumeValue">80%</span>
+                </div>
+                
+                <div class="duration-control">
+                    <label for="clipDuration">Duração do trecho (segundos):</label>
+                    <input type="number" min="5" max="60" value="15" class="duration-input" id="clipDuration">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="customSound">Ou adicione um URL de áudio personalizado:</label>
+                <input type="url" id="customSound" placeholder="https://exemplo.com/som.mp3">
+            </div>
+            
+            <button class="btn" id="addReminderBtn">
+                <i class="fas fa-plus"></i> Adicionar Lembrete
+            </button>
         </div>
-
+        
         <div class="card">
-            <h2>🎨 ערכות נושא</h2>
-            <div class="theme-selector">
-                <div class="theme-option selected" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="changeTheme('purple')" title="סגול קלאסי"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="changeTheme('pink')" title="ורוד אנרגטי"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="changeTheme('blue')" title="כחול רגוע"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="changeTheme('green')" title="ירוק רענן"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" onclick="changeTheme('sunset')" title="שקיעה"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);" onclick="changeTheme('ocean')" title="אוקיינוס"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);" onclick="changeTheme('candy')" title="ממתק"></div>
-                <div class="theme-option" style="background: linear-gradient(135deg, #2d3436 0%, #000000 100%);" onclick="changeTheme('dark')" title="כהה"></div>
+            <h2 class="card-title"><i class="fas fa-list"></i> Seus Lembretes</h2>
+            
+            <div class="reminders-container" id="remindersList">
+                <!-- Lembretes serão adicionados aqui dinamicamente -->
             </div>
         </div>
     </div>
-
-    <div class="notification-overlay" id="notificationOverlay"></div>
-    <div class="notification-popup" id="notificationPopup">
-        <div class="notification-title" id="notificationTitle">⏰ תזכורת!</div>
-        <div class="notification-message" id="notificationMessage"></div>
-        <div class="notification-actions">
-            <button onclick="snoozeReminder()" class="btn-secondary">😴 דחה ל-5 דקות</button>
-            <button onclick="closeNotification()">✅ הבנתי</button>
+    
+    <div class="notification-modal" id="notificationModal">
+        <div class="modal-content">
+            <h2 class="modal-title"><i class="fas fa-bell"></i> <span id="modalTitle">Lembrete</span></h2>
+            <p id="modalMessage">Sua mensagem personalizada aparecerá aqui</p>
+            
+            <audio id="notificationSound" class="sound-player" controls></audio>
+            
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" min="0" max="100" value="80" class="volume-slider" id="modalVolume">
+                <span id="modalVolumeValue">80%</span>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="action-btn snooze-btn" id="snoozeBtn">
+                    <i class="fas fa-clock"></i> Adiar (5 min)
+                </button>
+                <button class="action-btn dismiss-btn" id="dismissBtn">
+                    <i class="fas fa-check"></i> Concluído
+                </button>
+            </div>
         </div>
     </div>
-
-    <audio id="notificationSound"></audio>
+    
+    <footer>
+        <p>Tempo Divino &copy; 2023 - Seu jeito inteligente de se organizar</p>
+    </footer>
 
     <script>
-        // צלילים מוכנים
-        const builtInSounds = {
-            'פעמון רך': 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
-            'צפצוף': 'https://assets.mixkit.co/active_storage/sfx/2871/2871-preview.mp3',
-            'פעמון זכוכית': 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3',
-            'הודעה': 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3',
-            'ארפה': 'https://assets.mixkit.co/active_storage/sfx/2359/2359-preview.mp3',
-            'כלי נגינה': 'https://assets.mixkit.co/active_storage/sfx/2866/2866-preview.mp3',
-            'קסם': 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
-            'הצלחה': 'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'
-        };
-
-        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-        let completedCount = parseInt(localStorage.getItem('completedCount')) || 0;
-        let selectedSound = builtInSounds['פעמון רך'];
-        let currentTheme = localStorage.getItem('theme') || 'purple';
-        let currentReminderId = null;
-
-        const themes = {
-            purple: { primary: '#667eea', secondary: '#764ba2' },
-            pink: { primary: '#f093fb', secondary: '#f5576c' },
-            blue: { primary: '#4facfe', secondary: '#00f2fe' },
-            green: { primary: '#43e97b', secondary: '#38f9d7' },
-            sunset: { primary: '#fa709a', secondary: '#fee140' },
-            ocean: { primary: '#30cfd0', secondary: '#330867' },
-            candy: { primary: '#ff6e7f', secondary: '#bfe9ff' },
-            dark: { primary: '#2d3436', secondary: '#000000' }
-        };
-
-        // אתחול
-        window.onload = function() {
-            initSoundLibrary();
-            initBackgroundAnimation();
-            renderReminders();
-            updateStats();
-            setTodayDate();
-            initVolumeControl();
-            changeTheme(currentTheme);
-            checkReminders();
-            setInterval(checkReminders, 1000);
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar data mínima para hoje
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reminderDate').min = today;
             
-            document.getElementById('reminderColor').addEventListener('change', updateColorName);
-        };
-
-        function initSoundLibrary() {
-            const library = document.getElementById('soundLibrary');
-            Object.entries(builtInSounds).forEach(([name, url], index) => {
-                const div = document.createElement('div');
-                div.className = 'sound-option' + (index === 0 ? ' selected' : '');
-                div.innerHTML = `🔔<br>${name}`;
-                div.onclick = () => selectSound(url, div);
-                library.appendChild(div);
+            // Configurar hora para agora em diante
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            document.getElementById('reminderTime').min = timeString;
+            
+            // Inicializar partículas de fundo
+            initBackground();
+            
+            // Carregar lembretes do localStorage
+            loadReminders();
+            
+            // Atualizar valor do volume
+            document.getElementById('volumeControl').addEventListener('input', function() {
+                document.getElementById('volumeValue').textContent = this.value + '%';
             });
-        }
-
-        function selectSound(url, element) {
-            document.querySelectorAll('.sound-option').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedSound = url;
             
-            // נגן דוגמה
-            const audio = document.getElementById('notificationSound');
-            audio.src = url;
-            audio.volume = document.getElementById('volume').value / 100;
-            audio.play();
-        }
-
-        function initBackgroundAnimation() {
-            const container = document.getElementById('backgroundAnimation');
-            for (let i = 0; i < 15; i++) {
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                const size = Math.random() * 100 + 50;
-                bubble.style.width = size + 'px';
-                bubble.style.height = size + 'px';
-                bubble.style.right = Math.random() * 100 + '%';
-                bubble.style.animationDelay = Math.random() * 15 + 's';
-                bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                container.appendChild(bubble);
+            // Atualizar valor do volume modal
+            document.getElementById('modalVolume').addEventListener('input', function() {
+                document.getElementById('modalVolumeValue').textContent = this.value + '%';
+                document.getElementById('notificationSound').volume = this.value / 100;
+            });
+            
+            // Busca de músicas (simulada)
+            document.getElementById('soundSearch').addEventListener('input', function() {
+                searchMusic(this.value);
+            });
+            
+            // Adicionar lembrete
+            document.getElementById('addReminderBtn').addEventListener('click', addReminder);
+            
+            // Iniciar verificação de lembretes
+            setInterval(checkReminders, 1000);
+        });
+        
+        // Inicializar partículas de fundo
+        function initBackground() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Tamanho aleatório
+                const size = Math.random() * 10 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Posição aleatória
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Cor aleatória
+                const colors = ['#6C63FF', '#FF6584', '#4CAF50', '#2196F3'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Duração animação aleatória
+                particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                container.appendChild(particle);
             }
         }
-
-        function setTodayDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('reminderDate').value = today;
-        }
-
-        function initVolumeControl() {
-            const volumeSlider = document.getElementById('volume');
-            const volumeDisplay = document.getElementById('volumeDisplay');
+        
+        // Busca de músicas (simulada)
+        function searchMusic(query) {
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.innerHTML = '';
             
-            volumeSlider.addEventListener('input', function() {
-                volumeDisplay.textContent = this.value + '%';
-            });
-        }
-
-        function updateColorName() {
-            const color = document.getElementById('reminderColor').value;
-            const colorNames = {
-                '#667eea': 'סגול',
-                '#f093fb': 'ורוד',
-                '#4facfe': 'כחול',
-                '#43e97b': 'ירוק',
-                '#ff6b6b': 'אדום',
-                '#feca57': 'צהוב',
-                '#ff9ff3': 'ורוד בהיר'
-            };
-            document.getElementById('colorName').value = colorNames[color] || 'מותאם';
-        }
-
-        function addReminder() {
-            const name = document.getElementById('reminderName').value;
-            const time = document.getElementById('reminderTime').value;
-            const date = document.getElementById('reminderDate').value;
-            const message = document.getElementById('reminderMessage').value;
-            const color = document.getElementById('reminderColor').value;
-            const volume = document.getElementById('volume').value;
-            const category = document.getElementById('reminderCategory').value;
-            const repeat = document.getElementById('reminderRepeat').value;
-            const customUrl = document.getElementById('customSoundUrl').value;
-
-            if (!name || !time || !date) {
-                alert('נא למלא את כל השדות הנדרשים');
+            if (query.length < 2) return;
+            
+            // Simular resultados de busca
+            const mockResults = [
+                { name: 'Bohemian Rhapsody', artist: 'Queen', id: 1 },
+                { name: 'Shape of You', artist: 'Ed Sheeran', id: 2 },
+                { name: 'Blinding Lights', artist: 'The Weeknd', id: 3 },
+                { name: 'Dance Monkey', artist: 'Tones and I', id: 4 },
+                { name: 'Believer', artist: 'Imagine Dragons', id: 5 }
+            ];
+            
+            // Filtrar resultados
+            const filtered = mockResults.filter(item => 
+                item.name.toLowerCase().includes(query.toLowerCase()) || 
+                item.artist.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            // Exibir resultados
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = '<div class="empty-state"><p>Nenhum resultado encontrado</p></div>';
                 return;
             }
-
+            
+            filtered.forEach(item => {
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                resultItem.innerHTML = `
+                    <i class="fas fa-music"></i>
+                    <div class="result-info">
+                        <div class="result-name">${item.name}</div>
+                        <div class="result-artist">${item.artist}</div>
+                    </div>
+                `;
+                
+                resultItem.addEventListener('click', () => {
+                    document.getElementById('soundSearch').value = `${item.name} - ${item.artist}`;
+                    resultsContainer.innerHTML = '';
+                    
+                    // Simular seleção de música (em um caso real, isso buscaria a URL do áudio)
+                    document.getElementById('customSound').value = `https://exemplo.com/audio/${item.id}.mp3`;
+                });
+                
+                resultsContainer.appendChild(resultItem);
+            });
+        }
+        
+        // Adicionar novo lembrete
+        function addReminder() {
+            const title = document.getElementById('reminderTitle').value;
+            const date = document.getElementById('reminderDate').value;
+            const time = document.getElementById('reminderTime').value;
+            const message = document.getElementById('reminderMessage').value;
+            const soundUrl = document.getElementById('customSound').value;
+            const volume = document.getElementById('volumeControl').value;
+            const duration = document.getElementById('clipDuration').value;
+            
+            if (!title || !date || !time) {
+                alert('Por favor, preencha todos os campos obrigatórios');
+                return;
+            }
+            
             const reminder = {
                 id: Date.now(),
-                name,
-                time,
+                title,
                 date,
-                message: message || `זמן ל: ${name}`,
-                color,
-                sound: customUrl || selectedSound,
+                time,
+                message: message || 'Lembrete importante!',
+                soundUrl: soundUrl || 'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3',
                 volume,
-                category,
-                repeat,
-                active: true,
-                created: new Date().toISOString()
+                duration,
+                active: true
             };
-
+            
+            // Salvar no localStorage
+            const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
             reminders.push(reminder);
-            saveReminders();
-            renderReminders();
-            updateStats();
-
-            // אנימציית הצלחה
-            const card = document.querySelector('.card');
-            card.classList.add('success-animation');
-            setTimeout(() => card.classList.remove('success-animation'), 500);
-
-            // נקה טופס
-            document.getElementById('reminderName').value = '';
+            localStorage.setItem('reminders', JSON.stringify(reminders));
+            
+            // Atualizar a lista
+            loadReminders();
+            
+            // Limpar formulário
+            document.getElementById('reminderTitle').value = '';
+            document.getElementById('reminderDate').value = '';
+            document.getElementById('reminderTime').value = '';
             document.getElementById('reminderMessage').value = '';
-            setTodayDate();
+            document.getElementById('customSound').value = '';
+            document.getElementById('soundSearch').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+            
+            alert('Lembrete adicionado com sucesso!');
         }
-
-        function renderReminders(filter = 'all') {
-            const list = document.getElementById('reminderList');
-            let filtered = [...reminders];
-
-            // סינון
-            if (filter === 'today') {
-                const today = new Date().toISOString().split('T')[0];
-                filtered = filtered.filter(r => r.date === today);
-            } else if (filter === 'upcoming') {
-                const today = new Date().toISOString().split('T')[0];
-                filtered = filtered.filter(r => r.date > today);
-            }
-
-            // סדר לפי תאריך ושעה
-            filtered.sort((a, b) => {
-                const dateTimeA = new Date(a.date + ' ' + a.time);
-                const dateTimeB = new Date(b.date + ' ' + b.time);
-                return dateTimeA - dateTimeB;
-            });
-
-            if (filtered.length === 0) {
-                list.innerHTML = `
+        
+        // Carregar lembretes
+        function loadReminders() {
+            const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+            const container = document.getElementById('remindersList');
+            
+            if (reminders.length === 0) {
+                container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <h3>אין תזכורות</h3>
-                        <p>הוסף תזכורת חדשה כדי להתחיל</p>
+                        <i class="fas fa-bell-slash"></i>
+                        <p>Nenhum lembrete cadastrado</p>
+                        <p>Adicione seu primeiro lembrete usando o formulário acima</p>
                     </div>
                 `;
                 return;
             }
-
-            list.innerHTML = filtered.map(reminder => {
-                const categoryColors = {
-                    'כללי': '#9b59b6',
-                    'עבודה': '#3498db',
-                    'בריאות': '#e74c3c',
-                    'משפחה': '#e67e22',
-                    'לימודים': '#16a085',
-                    'ספורט': '#27ae60',
-                    'אישי': '#f39c12'
-                };
-
-                const repeatText = {
-                    'daily': 'יומי',
-                    'weekdays': 'ימי חול',
-                    'weekly': 'שבועי',
-                    'monthly': 'חודשי'
-                };
-
-                return `
-                    <div class="reminder-item" style="border-right-color: ${reminder.color}">
-                        <div class="reminder-header">
-                            <div>
-                                ${reminder.repeat !== 'none' ? `<span class="repeat-badge">🔄 ${repeatText[reminder.repeat]}</span>` : ''}
-                                <span class="reminder-title">${reminder.name}</span>
-                                <span class="category-badge" style="background: ${categoryColors[reminder.category]}20; color: ${categoryColors[reminder.category]}">${reminder.category}</span>
-                            </div>
-                            <div class="reminder-time">⏰ ${reminder.time}</div>
+            
+            // Ordenar por data e hora
+            reminders.sort((a, b) => {
+                const aDate = new Date(`${a.date}T${a.time}`);
+                const bDate = new Date(`${b.date}T${b.time}`);
+                return aDate - bDate;
+            });
+            
+            container.innerHTML = '';
+            
+            reminders.forEach(reminder => {
+                if (!reminder.active) return;
+                
+                const item = document.createElement('div');
+                item.classList.add('reminder-item');
+                item.innerHTML = `
+                    <div class="reminder-header">
+                        <div class="reminder-title">
+                            <i class="fas fa-bell"></i>
+                            ${reminder.title}
                         </div>
-                        <div class="reminder-details">
-                            📅 ${new Date(reminder.date).toLocaleDateString('he-IL')}
-                        </div>
-                        <div class="reminder-details">
-                            💬 ${reminder.message}
-                        </div>
-                        <div class="reminder-details">
-                            🔊 עוצמה: ${reminder.volume}%
-                        </div>
-                        <div class="reminder-actions">
-                            <button onclick="testReminder(${reminder.id})" class="btn-small btn-test">🔔 נסה</button>
-                            <button onclick="editReminder(${reminder.id})" class="btn-small btn-secondary">✏️ ערוך</button>
-                            <button onclick="deleteReminder(${reminder.id})" class="btn-small btn-delete">🗑️ מחק</button>
+                        <div class="reminder-time">
+                            ${formatDate(reminder.date)} às ${reminder.time}
                         </div>
                     </div>
+                    <div class="reminder-message">${reminder.message}</div>
+                    <div class="reminder-actions">
+                        <button class="action-btn delete-btn" onclick="deleteReminder(${reminder.id})">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
                 `;
-            }).join('');
-        }
-
-        function testReminder(id) {
-            const reminder = reminders.find(r => r.id === id);
-            if (reminder) {
-                showNotification(reminder);
-            }
-        }
-
-        function deleteReminder(id) {
-            if (confirm('בטוח שברצונך למחוק תזכורת זו?')) {
-                reminders = reminders.filter(r => r.id !== id);
-                saveReminders();
-                renderReminders();
-                updateStats();
-            }
-        }
-
-        function editReminder(id) {
-            const reminder = reminders.find(r => r.id === id);
-            if (reminder) {
-                document.getElementById('reminderName').value = reminder.name;
-                document.getElementById('reminderTime').value = reminder.time;
-                document.getElementById('reminderDate').value = reminder.date;
-                document.getElementById('reminderMessage').value = reminder.message;
-                document.getElementById('reminderColor').value = reminder.color;
-                document.getElementById('volume').value = reminder.volume;
-                document.getElementById('reminderCategory').value = reminder.category;
-                document.getElementById('reminderRepeat').value = reminder.repeat;
                 
-                deleteReminder(id);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+                container.appendChild(item);
+            });
         }
-
+        
+        // Formatar data
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });
+        }
+        
+        // Excluir lembrete
+        function deleteReminder(id) {
+            if (!confirm('Tem certeza que deseja excluir este lembrete?')) return;
+            
+            const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+            const updated = reminders.filter(r => r.id !== id);
+            localStorage.setItem('reminders', JSON.stringify(updated));
+            
+            loadReminders();
+        }
+        
+        // Verificar lembretes ativos
         function checkReminders() {
             const now = new Date();
-            const currentTime = now.toTimeString().slice(0, 5);
             const currentDate = now.toISOString().split('T')[0];
-
+            const currentTime = now.getHours().toString().padStart(2, '0') + ':' + 
+                               now.getMinutes().toString().padStart(2, '0');
+            
+            const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+            
             reminders.forEach(reminder => {
                 if (reminder.active && reminder.date === currentDate && reminder.time === currentTime) {
                     showNotification(reminder);
-                    
-                    // טיפול בחזרה
-                    if (reminder.repeat !== 'none') {
-                        handleRepeat(reminder);
-                    } else {
-                        reminder.active = false;
-                    }
-                    
-                    completedCount++;
-                    localStorage.setItem('completedCount', completedCount);
-                    saveReminders();
-                    updateStats();
                 }
             });
         }
-
-        function handleRepeat(reminder) {
-            const date = new Date(reminder.date);
-            
-            switch(reminder.repeat) {
-                case 'daily':
-                    date.setDate(date.getDate() + 1);
-                    break;
-                case 'weekdays':
-                    date.setDate(date.getDate() + 1);
-                    while (date.getDay() === 0 || date.getDay() === 6) {
-                        date.setDate(date.getDate() + 1);
-                    }
-                    break;
-                case 'weekly':
-                    date.setDate(date.getDate() + 7);
-                    break;
-                case 'monthly':
-                    date.setMonth(date.getMonth() + 1);
-                    break;
-            }
-            
-            reminder.date = date.toISOString().split('T')[0];
-        }
-
+        
+        // Exibir notificação
         function showNotification(reminder) {
-            currentReminderId = reminder.id;
+            const modal = document.getElementById('notificationModal');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            const sound = document.getElementById('notificationSound');
             
-            document.getElementById('notificationTitle').textContent = '⏰ ' + reminder.name;
-            document.getElementById('notificationMessage').textContent = reminder.message;
-            document.getElementById('notificationOverlay').classList.add('show');
-            document.getElementById('notificationPopup').classList.add('show');
-
-            const audio = document.getElementById('notificationSound');
-            audio.src = reminder.sound;
-            audio.volume = reminder.volume / 100;
-            audio.loop = true;
-            audio.play();
-
-            // הודעת דפדפן
-            if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(reminder.name, {
-                    body: reminder.message,
-                    icon: '⏰'
-                });
-            }
-        }
-
-        function closeNotification() {
-            document.getElementById('notificationOverlay').classList.remove('show');
-            document.getElementById('notificationPopup').classList.remove('show');
-            document.getElementById('notificationSound').pause();
-            currentReminderId = null;
-        }
-
-        function snoozeReminder() {
-            if (currentReminderId) {
-                const reminder = reminders.find(r => r.id === currentReminderId);
-                if (reminder) {
-                    const now = new Date();
-                    now.setMinutes(now.getMinutes() + 5);
-                    reminder.time = now.toTimeString().slice(0, 5);
-                    saveReminders();
-                    renderReminders();
-                }
-            }
-            closeNotification();
-        }
-
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            const activeReminders = reminders.filter(r => r.active);
-            const todayReminders = activeReminders.filter(r => r.date === today);
-
-            document.getElementById('totalReminders').textContent = activeReminders.length;
-            document.getElementById('todayReminders').textContent = todayReminders.length;
-            document.getElementById('completedReminders').textContent = completedCount;
-        }
-
-        function saveReminders() {
-            localStorage.setItem('reminders', JSON.stringify(reminders));
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            // Configurar conteúdo
+            title.textContent = reminder.title;
+            message.textContent = reminder.message;
+            sound.src = reminder.soundUrl;
+            sound.volume = reminder.volume / 100;
             
-            event.target.classList.add('active');
-            document.getElementById(tab + '-tab').classList.add('active');
-        }
-
-        function switchReminderTab(filter) {
-            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            renderReminders(filter);
-        }
-
-        function filterReminders() {
-            const search = document.getElementById('filterReminders').value.toLowerCase();
-            const items = document.querySelectorAll('.reminder-item');
+            // Configurar volume inicial
+            document.getElementById('modalVolume').value = reminder.volume;
+            document.getElementById('modalVolumeValue').textContent = reminder.volume + '%';
             
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(search) ? 'block' : 'none';
-            });
-        }
-
-        async function searchSound() {
-            const query = document.getElementById('soundSearch').value;
-            const results = document.getElementById('searchResults');
+            // Mostrar modal
+            modal.classList.add('active');
+            sound.play();
             
-            if (!query) {
-                alert('נא להזין מילת חיפוש');
-                return;
-            }
-
-            results.innerHTML = '<p>🔍 מחפש צלילים...</p>';
-
-            // סימולציה של חיפוש (במציאות תשתמש ב-API אמיתי)
-            const mockResults = [
-                { name: 'Bell Sound 1', url: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3' },
-                { name: 'Bell Sound 2', url: 'https://assets.mixkit.co/active_storage/sfx/2871/2871-preview.mp3' },
-                { name: 'Notification', url: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3' }
-            ];
-
-            setTimeout(() => {
-                results.innerHTML = `
-                    <div class="sound-library">
-                        ${mockResults.map(sound => `
-                            <div class="sound-option" onclick="useCustomSound('${sound.url}')">
-                                🎵<br>${sound.name}
-                            </div>
-                        `).join('')}
-                    </div>
-                    <p style="margin-top: 10px; font-size: 0.9em; color: #999;">
-                        💡 טיפ: אפשר גם להדביק קישור ישיר לקובץ MP3
-                    </p>
-                `;
-            }, 1000);
-        }
-
-        function useCustomSound(url) {
-            selectedSound = url;
-            document.getElementById('customSoundUrl').value = url;
+            // Configurar botões
+            document.getElementById('dismissBtn').onclick = function() {
+                modal.classList.remove('active');
+                reminder.active = false;
+                localStorage.setItem('reminders', JSON.stringify(
+                    JSON.parse(localStorage.getItem('reminders'))
+                ));
+            };
             
-            // נגן דוגמה
-            const audio = document.getElementById('notificationSound');
-            audio.src = url;
-            audio.volume = document.getElementById('volume').value / 100;
-            audio.play();
+            document.getElementById('snoozeBtn').onclick = function() {
+                modal.classList.remove('active');
+                
+                // Adiar o lembrete em 5 minutos
+                const newTime = new Date();
+                newTime.setMinutes(newTime.getMinutes() + 5);
+                
+                const newReminder = {
+                    ...reminder,
+                    id: Date.now(),
+                    date: newTime.toISOString().split('T')[0],
+                    time: newTime.getHours().toString().padStart(2, '0') + ':' +
+                          newTime.getMinutes().toString().padStart(2, '0')
+                };
+                
+                // Adicionar novamente
+                const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+                reminders.push(newReminder);
+                localStorage.setItem('reminders', JSON.stringify(reminders));
+            };
         }
-
-        function changeTheme(themeName) {
-            currentTheme = themeName;
-            localStorage.setItem('theme', themeName);
-            
-            const theme = themes[themeName];
-            document.body.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-            
-            // עדכן כפתורי ערכת נושא
-            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('selected'));
-            event?.target?.classList.add('selected');
-        }
-
-        // בקשת הרשאות להודעות
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
-
-        // מניעת סגירה בטעות
-        window.addEventListener('beforeunload', function (e) {
-            const activeReminders = reminders.filter(r => r.active && r.date === new Date().toISOString().split('T')[0]);
-            if (activeReminders.length > 0) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
     </script>
 </body>
 </html>
