@@ -1,133 +1,246 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>⏰ תזכורות עובדות</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{
-  font-family:Arial, sans-serif;
-  background:#1e1e2f; color:white;
-  display:flex; justify-content:center;
-  padding:20px;
-}
-.container{max-width:600px; width:100%;}
-.card{
-  background:#2a2a3d; padding:20px;
-  border-radius:12px; margin-bottom:20px;
-}
-input,textarea,button{
-  width:100%; margin:5px 0; padding:10px;
-  border-radius:8px; border:none;
-  font-size:16px;
-}
-button{background:#00ff88; color:black; font-weight:bold; cursor:pointer;}
-button:hover{opacity:0.8;}
-.reminder{background:#3a3a5a;padding:10px;border-radius:8px;margin:5px 0;}
-</style>
+    <meta charset="UTF-8">
+    <title>⏰ תזכורות חכמות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e2f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container { max-width: 600px; width: 100%; }
+        .card {
+            background: #2a2a3d;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+        button {
+            background: #00ff88;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { opacity: 0.8; }
+        .reminder {
+            background: #3a3a5a;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <h1>⏰ תזכורות עובדות</h1>
-  
-  <div class="card">
-    <input id="title" placeholder="שם התזכורת">
-    <input id="time" type="time">
-    <input id="date" type="date">
-    <textarea id="msg" placeholder="הודעה שתופיע"></textarea>
-    
-    <h3>שיר / צליל (אופציונלי)</h3>
-    <input id="sound" placeholder="קישור mp3 ישיר או ריק">
-    <label>עוצמה: <span id="volVal">70%</span></label>
-    <input id="volume" type="range" min="0" max="100" value="70">
-    
-    <button onclick="addReminder()">➕ הוסף תזכורת</button>
-  </div>
-  
-  <div class="card">
-    <h3>תזכורות פעילות</h3>
-    <div id="list"></div>
-  </div>
-</div>
+    <div class="container">
+        <h1>⏰ תזכורות חכמות</h1>
 
-<script>
-let reminders = JSON.parse(localStorage.getItem("reminders")||"[]");
+        <div class="card">
+            <input id="title" placeholder="שם התזכורת">
+            <input id="time" type="time">
+            <input id="date" type="date">
+            <textarea id="msg" placeholder="הודעה שתופיע"></textarea>
 
-function save(){ localStorage.setItem("reminders", JSON.stringify(reminders)); }
+            <h3>🎵 חפש שיר (בישום)</h3>
+            <input id="songQuery" placeholder="הכנס שם שיר">
+            <button onclick="searchSong()">🔎 חפש שיר</button>
+            <div id="songResults"></div>
 
-function render(){
-  const div=document.getElementById("list");
-  if(reminders.length===0){div.innerHTML="אין תזכורות"; return;}
-  div.innerHTML="";
-  reminders.forEach(r=>{
-    const d=document.createElement("div");
-    d.className="reminder";
-    d.innerHTML=`<b>${r.title}</b> | ${r.date} ${r.time}<br>${r.msg}`;
-    div.appendChild(d);
-  });
-}
+            <h3>⏱️ קטע מהשיר (אופציונלי)</h3>
+            <input id="startSec" placeholder="התחלה (mm:ss)" style="width:45%">
+            <input id="endSec" placeholder="סיום (mm:ss)" style="width:45%">
 
-function addReminder(){
-  const title=document.getElementById("title").value.trim();
-  const time=document.getElementById("time").value;
-  const date=document.getElementById("date").value;
-  const msg=document.getElementById("msg").value.trim()||`זמן ל: ${title}`;
-  const sound=document.getElementById("sound").value.trim();
-  const volume=document.getElementById("volume").value/100;
-  
-  if(!title||!time||!date){alert("מלא שם, תאריך ושעה");return;}
-  const id=Date.now();
-  const target=new Date(`${date}T${time}:00`).getTime();
-  
-  const r={id,title,date,time,msg,sound,volume,target,active:true};
-  reminders.push(r); save(); render();
-  
-  const delay=r.target-Date.now();
-  if(delay>0) setTimeout(()=>notify(r), delay);
-  else alert("הזמן עבר...");
-}
+            <h3>🔊 עוצמה</h3>
+            <label>עוצמה: <span id="volVal">70%</span></label>
+            <input id="volume" type="range" min="0" max="100" value="70">
 
-function notify(r){
-  if(!r.active) return;
-  // התראה דפדפן
-  if("Notification" in window){
-    if(Notification.permission==="granted")
-      new Notification(r.title, {body:r.msg});
-    else if(Notification.permission!=="denied")
-      Notification.requestPermission().then(p=>{
-        if(p==="granted") new Notification(r.title,{body:r.msg});
-      });
-  }
-  // צליל
-  if(r.sound){
-    const audio=new Audio(r.sound);
-    audio.volume=r.volume;
-    audio.play().catch(()=>alert("הצליל לא נטען (ודא שזה mp3 ישיר)"));
-  }else{
-    // ברירת מחדל קצרה
-    const beep=new Audio("https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3");
-    beep.volume=r.volume;
-    beep.play();
-  }
-  // סמן כלא פעילה
-  r.active=false; save(); render();
-}
+            <button onclick="addReminder()">➕ הוסף תזכורת</button>
+        </div>
 
-document.getElementById("volume").oninput=e=>{
-  document.getElementById("volVal").textContent=e.target.value+"%";
-};
+        <div class="card">
+            <h3>📋 תזכורות פעילות</h3>
+            <div id="list"></div>
+        </div>
+    </div>
 
-// בדוק תזכורות אחרי טעינה
-function init(){
-  render();
-  reminders.forEach(r=>{
-    if(r.active){
-      const delay=r.target-Date.now();
-      if(delay>0) setTimeout(()=>notify(r), delay);
-    }
-  });
-}
-init();
-</script>
+    <script>
+        const YOUTUBE_API_KEY = 'AIzaSyBDGwqcOIqo3vaYXhBBum4gotp9ltLXo14'; // <-- API KEY שלך
+        let reminders = JSON.parse(localStorage.getItem("reminders") || "[]");
+
+        function save() { localStorage.setItem("reminders", JSON.stringify(reminders)); }
+
+        function render() {
+            const div = document.getElementById("list");
+            if (reminders.length === 0) { div.innerHTML = "אין תזכורות"; return; }
+            div.innerHTML = "";
+            reminders.forEach(r => {
+                const d = document.createElement("div");
+                d.className = "reminder";
+                d.innerHTML = `<b>${r.title}</b> | ${r.date} ${r.time}<br>${r.msg}`;
+                div.appendChild(d);
+            });
+        }
+
+        async function searchSong() {
+            const query = document.getElementById("songQuery").value.trim();
+            if (!query) return;
+
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(query)}&key=${YOUTUBE_API_KEY}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const resultsDiv = document.getElementById("songResults");
+                if (data.items && data.items.length > 0) {
+                    resultsDiv.innerHTML = data.items.map(item => {
+                        const videoId = item.id.videoId;
+                        const title = item.snippet.title;
+                        const thumbnail = item.snippet.thumbnails.default.url;
+                        return `
+                            <div style="margin:10px 0; padding:10px; background:#3a3a5a; border-radius:8px;">
+                                <img src="${thumbnail}" alt="thumbnail" style="width:80px; float:left; margin-right:10px;">
+                                <div>
+                                    <b>${title}</b><br>
+                                    <button onclick="selectSong('${videoId}', '${title}')">בחר</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    resultsDiv.innerHTML = "<p>לא נמצאו תוצאות.</p>";
+                }
+            } catch (error) {
+                console.error('שגיאה בחיפוש:', error);
+                document.getElementById("songResults").innerHTML = "<p>שגיאה בחיפוש. נסה שוב.</p>";
+            }
+        }
+
+        let selectedSong = null;
+
+        function selectSong(videoId, title) {
+            selectedSong = { id: videoId, title };
+            document.getElementById("songResults").innerHTML = `<p>נבחר: ${title}</p>`;
+        }
+
+        function addReminder() {
+            const title = document.getElementById("title").value.trim();
+            const time = document.getElementById("time").value;
+            const date = document.getElementById("date").value;
+            const msg = document.getElementById("msg").value.trim() || `זמן ל: ${title}`;
+            const start = parseTime(document.getElementById("startSec").value);
+            const end = parseTime(document.getElementById("endSec").value);
+            const volume = document.getElementById("volume").value / 100;
+
+            if (!title || !time || !date) {
+                alert("מלא שם, תאריך ושעה");
+                return;
+            }
+
+            const target = new Date(`${date}T${time}:00`).getTime();
+            const delay = target - Date.now();
+
+            const reminder = {
+                id: Date.now(),
+                title,
+                date,
+                time,
+                msg,
+                song: selectedSong,
+                start,
+                end,
+                volume,
+                target,
+                active: true
+            };
+
+            reminders.push(reminder);
+            save();
+            render();
+
+            if (delay > 0) setTimeout(() => notify(reminder), delay);
+            else alert("הזמן עבר...");
+
+            clearForm();
+        }
+
+        function parseTime(str) {
+            if (!str) return 0;
+            const [m, s] = str.split(':').map(Number);
+            return (isNaN(m) ? 0 : m) * 60 + (isNaN(s) ? 0 : s);
+        }
+
+        function notify(r) {
+            if (!r.active) return;
+
+            // התראה דפדפן
+            if ("Notification" in window) {
+                if (Notification.permission === "granted")
+                    new Notification(r.title, { body: r.msg });
+                else if (Notification.permission !== "denied")
+                    Notification.requestPermission().then(p => {
+                        if (p === "granted") new Notification(r.title, { body: r.msg });
+                    });
+            }
+
+            // צליל
+            if (r.song) {
+                const audio = new Audio(`https://www.youtube.com/embed/${r.song.id}?autoplay=1&start=${r.start}&end=${r.end}`);
+                audio.volume = r.volume;
+                audio.play().catch(e => {
+                    console.log("לא ניתן לנגן: ", e);
+                    // אם לא עובד – ננסה צליל ברירת מחדל
+                    const beep = new Audio("https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3");
+                    beep.volume = r.volume;
+                    beep.play();
+                });
+            } else {
+                const beep = new Audio("https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3");
+                beep.volume = r.volume;
+                beep.play();
+            }
+
+            r.active = false;
+            save();
+            render();
+        }
+
+        function clearForm() {
+            document.getElementById("title").value = "";
+            document.getElementById("songQuery").value = "";
+            document.getElementById("songResults").innerHTML = "";
+            document.getElementById("startSec").value = "";
+            document.getElementById("endSec").value = "";
+            document.getElementById("volume").value = 70;
+            document.getElementById("volVal").textContent = "70%";
+            selectedSong = null;
+        }
+
+        document.getElementById("volume").oninput = e => {
+            document.getElementById("volVal").textContent = e.target.value + "%";
+        };
+
+        function init() {
+            render();
+            reminders.forEach(r => {
+                if (r.active) {
+                    const delay = r.target - Date.now();
+                    if (delay > 0) setTimeout(() => notify(r), delay);
+                }
+            });
+        }
+
+        init();
+    </script>
 </body>
 </html>
