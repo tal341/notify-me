@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>תזכורות מותאמות אישית</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    audio {
+      display: none;
+    }
+
+    .reminder-list {
+      margin-top: 20px;
+    }
+
+    .reminder-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .search-results {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      margin-top: 10px;
+      border-radius: 6px;
+    }
+
+    .search-result {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .search-result:hover {
+      background-color: #f1f1f1;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🔔 תזכורות מותאמות אישית</h1>
+
+  <label>שם התזכורת:</label>
+  <input type="text" id="reminderName" placeholder="לדוגמה: תרגול גיטרה">
+
+  <label>שעה:</label>
+  <input type="time" id="reminderTime">
+
+  <label>צליל / שיר:</label>
+  <input type="text" id="soundQuery" placeholder="חפש שיר או צלצול..." oninput="searchSounds()">
+  <div class="search-results" id="searchResults"></div>
+
+  <audio id="audioPlayer" controls></audio>
+
+  <label>עוצמת שמע:</label>
+  <input type="range" min="0" max="1" step="0.01" value="0.7" id="volumeSlider" onchange="changeVolume()">
+
+  <button onclick="addReminder()">➕ הוסף תזכורת</button>
+
+  <div class="reminder-list" id="reminderList"></div>
+</div>
+
+<script>
+  let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+  let selectedSoundUrl = '';
+
+  function searchSounds() {
+    const query = document.getElementById("soundQuery").value;
+    if (!query) {
+      document.getElementById("searchResults").innerHTML = '';
+      return;
+    }
+
+    fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`)}`)
+      .then(res => res.json())
+      .then(data => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        const videos = Array.from(doc.querySelectorAll('a[href^="/watch"]')).slice(0, 5);
+
+        let resultsHTML = '';
+        videos.forEach(a => {
+          const title = a.title || "ללא שם";
+          const url = "https://www.youtube.com" + a.href;
+          resultsHTML += `<div class="search-result" onclick="selectSound('${url}')">${title}</div>`;
+        });
+
+        document.getElementById("searchResults").innerHTML = resultsHTML;
+      })
+      .catch(() => alert("שגיאה בחיפוש"));
+  }
+
+  function selectSound(url) {
+    selectedSoundUrl = url;
+    const embedUrl = url.replace("watch?v=", "embed/");
+    document.getElementById("audioPlayer").src = embedUrl;
+    document.getElementById("searchResults").innerHTML = '';
+    changeVolume(); // עדכון עוצמה
+  }
+
+  function changeVolume() {
+    const volume = parseFloat(document.getElementById("volumeSlider").value);
+    const player = document.getElementById("audioPlayer");
+    player.volume = volume;
+  }
+
+  function addReminder() {
+    const name = document.getElementById("reminderName").value;
+    const time = document.getElementById("reminderTime").value;
+
+    if (!name || !time || !selectedSoundUrl) {
+      alert("אנא מלא את כל השדות ובחר צלצול.");
+      return;
+    }
+
+    const reminder = { name, time, sound: selectedSoundUrl };
+    reminders.push(reminder);
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    renderReminders();
+    alert("התזכורת נוספה בהצלחה!");
+  }
+
+  function renderReminders() {
+    const list = document.getElementById("reminderList");
+    list.innerHTML = '';
+    reminders.forEach((r, i) => {
+      const div = document.createElement("div");
+      div.className = "reminder-item";
+      div.innerHTML = `
+        <span>${r.name} - ${r.time}</span>
+        <button onclick="deleteReminder(${i})">🗑️</button>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function deleteReminder(index) {
+    reminders.splice(index, 1);
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+    renderReminders();
+  }
+
+  function checkReminders() {
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    reminders.forEach(r => {
+      if (r.time === currentTime) {
+        alert(`⏰ תזכורת: ${r.name}`);
+        playSound(r.sound);
+      }
+    });
+  }
+
+  function playSound(url) {
+    const player = document.getElementById("audioPlayer");
+    player.src = url.replace("watch?v=", "embed/");
+    player.play();
+  }
+
+  setInterval(checkReminders, 60000); // בדיקה כל דקה
+
+  window.onload = () => {
+    renderReminders();
+  };
+</script>
+
+</body>
+</html>
