@@ -2,11 +2,11 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>⏰ תזכורות חכמות</title>
+<title>⏰ תזכורות חכמות – פשוט ונוח</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://img.icons8.com/ios-filled/50/000000/alarm.png">
 
-<!-- ==== עיצוב ==== -->
+<!-- ==== עיצוב מודרני ונקי ==== -->
 <style>
 :root{
     --bg:#1e1e2f;          /* רקע כהה */
@@ -84,6 +84,17 @@ button:active{transform:scale(.98);}
     border-radius:var(--radius);
     font-style:italic;
 }
+.volume-control{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    margin-top:.5rem;
+}
+.volume-control input[type="range"]{
+    flex:1;
+}
+.optional{color:#aaa;}
+
 @media (max-width:480px){
     h1{font-size:1.8rem;}
 }
@@ -98,21 +109,20 @@ button:active{transform:scale(.98);}
     <!-- ====================  טופס יצירת תזכורת ==================== -->
     <div class="card">
         <h2 class="small">🗒️ שם & זמן</h2>
-        <input id="title" type="text" placeholder="שם התזכורת (לדוגמה: לקחת תרופה)" required>
+        <input id="title" type="text" placeholder="שם התזכורת (חובה)" required>
         <input id="time" type="time" required>
 
-        <h2 class="small mt">🎵 שיר (או קישור MP3)</h2>
-        <input id="songQuery" type="text" placeholder="חפש בי‑טוב (YouTube) או הדבק קישור MP3">
+        <h2 class="small mt">🎵 שיר (אופציונלי)</h2>
+        <input id="songQuery" type="text" placeholder="חפש בי-טוב או הדבק קישור MP3">
         <button id="searchBtn" class="small">🔎 חפש שיר</button>
-
         <div id="songPreview"></div>
 
-        <h2 class="small mt">⏱️ קטע מהשיר (אופציונלי)</h2>
-        <div class="small">הזנת זמן בפורמט <b>mm:ss</b> – לדוגמה 00:30 (30 שניות)</div>
+        <h2 class="small mt optional">⏱️ קטע מהשיר (אופציונלי)</h2>
+        <div class="small optional">הזנת זמן בפורמט mm:ss (לדוגמה 00:30)</div>
         <input id="startSec" type="text" placeholder="התחלה (mm:ss)" class="small">
         <input id="endSec"   type="text" placeholder="סיום (mm:ss)" class="small">
 
-        <h2 class="small mt">💬 הודעה מותאמת</h2>
+        <h2 class="small mt">💬 הודעה (אופציונלי)</h2>
         <textarea id="msg" rows="2" placeholder="הודעה שתופיע (אם ריק – נוצרה הודעה אוטומטית)"></textarea>
         <select id="msgStyle" class="small">
             <option value="normal">רגילה</option>
@@ -120,6 +130,14 @@ button:active{transform:scale(.98);}
             <option value="motiv">מעודדת</option>
         </select>
         <div id="messagePreview"></div>
+
+        <h2 class="small mt">🔊 עוצמת צליל (אופציונלי)</h2>
+        <div class="volume-control">
+            <span>🔈</span>
+            <input type="range" id="volume" min="0" max="100" value="70">
+            <span>🔊</span>
+            <span id="volumeDisplay">70%</span>
+        </div>
 
         <button id="addBtn" class="mt">✨ הוסף תזכורת</button>
     </div>
@@ -135,14 +153,13 @@ button:active{transform:scale(.98);}
 <!-- ==== קוד JavaScript ==== -->
 <script>
 /* ====================  קבועים והגדרות ==================== */
-const YT_API_KEY = '';               // <-- הכנס כאן מפתח YouTube Data API (חינם) אם תרצה חיפוש אמיתי
-const YT_SEARCH_URL = 'https://www.googleapis.com/youtube/v3/search';
-const YT_VIDEO_URL  = 'https://www.youtube.com/embed/';   // embed id
 const STORAGE_KEY = 'smartReminders';
 let reminders = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let selectedSong = null;   // {type:'yt'|'url'|null, id:..., title:...}
 
 /* ====================  עזרי זמן ==================== */
 function toSec(str){                     // "mm:ss" → שניות
+    if(!str) return 0;
     const [m,s] = str.split(':').map(Number);
     return (isNaN(m)?0:m)*60 + (isNaN(s)?0:s);
 }
@@ -160,60 +177,54 @@ function generateMessage(title, style){
     return base; // normal
 }
 
-/* ====================  חיפוש שיר בי‑טוב ==================== */
-async function searchYouTube(query){
-    if(!YOUTUBE_API_KEY){
-        // ללא מפתח – נציג הודעה למשתמש
-        alert('אין מפתח YouTube API – חיפוש אינו זמין. ניתן להדביק קישור MP3 ישירות.');
-        return;
-    }
-    const url = `${YT_SEARCH_URL}?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(query)}&key=${YOUTUBE_API_KEY}`;
-    const resp = await fetch(url);
-    const data = await resp.json();
-    return data.items.map(v=>({id:v.id.videoId, title:v.snippet.title}));
+/* ====================  חיפוש שיר (אופציונלי) ==================== */
+function searchYouTube(query){
+    // ללא API – נציג קישור ישירות למשתמש
+    const preview = document.getElementById('songPreview');
+    preview.innerHTML = `
+        <p class="small">אין API – <b>הדבק קישור MP3 ישירות</b> או השאר ריק.</p>
+        <button class="small" onclick="selectSong(null)">🚫 ללא שיר</button>
+    `;
 }
 
 /* ====================  הצגת תוצאות חיפוש ==================== */
-async function handleSearch(){
+function handleSearch(){
     const q = document.getElementById('songQuery').value.trim();
-    if(!q) return;
+    if(!q) return searchYouTube(q);
+    
     const preview = document.getElementById('songPreview');
-    preview.innerHTML = '<p class="small">מחפש…</p>';
+    preview.innerHTML = '<p class="small">טוען…</p>';
 
     // אם הקישור הוא MP3 ישיר – נציג ישירות
     if(q.match(/\.(mp3|wav|ogg)(\?.*)?$/i)){
         preview.innerHTML = `
             <audio controls src="${q}"></audio>
             <button class="small" onclick="selectSong('${q}','קובץ MP3')">בחר קובץ זה</button>
+            <button class="small" onclick="selectSong(null)">🚫 ללא שיר</button>
         `;
         return;
     }
 
-    // חיפוש בי‑טוב (אם יש מפתח)
-    const results = await searchYouTube(q);
-    if(results.length===0){
-        preview.innerHTML = '<p class="small">לא נמצאו תוצאות.</p>';
-        return;
-    }
-    preview.innerHTML = results.map(r=>`
-        <div class="small" style="margin:.4rem 0;">
-            <b>${r.title}</b><br>
-            <iframe width="100%" height="80" src="${YT_VIDEO_URL}${r.id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <button class="small" onclick="selectSong('${r.id}','${r.title.replace(/'/g,"\\'")}')">בחר</button>
-        </div>
-    `).join('');
+    // אם לא – נציג קישור YouTube
+    preview.innerHTML = `
+        <p class="small">לא ניתן לחפש ללא API – <b>הדבק קישור MP3</b></p>
+        <button class="small" onclick="selectSong(null)">🚫 ללא שיר</button>
+    `;
 }
 
-/* ====================  בחירת שיר ==================== */
-let selectedSong = null;   // {type:'yt'|'url', id:..., title:...}
+/* ====================  בחירת שיר (כולל ללא שיר) ==================== */
 function selectSong(idOrUrl, title){
+    if(idOrUrl === null){
+        selectedSong = null;
+        document.getElementById('songPreview').innerHTML = '<p class="small">✅ לא נבחר שיר</p>';
+        return;
+    }
     if(idOrUrl.startsWith('http')){ // MP3 url
         selectedSong = {type:'url', url:idOrUrl, title};
-    }else{
+    }else{ // YouTube id
         selectedSong = {type:'yt', id:idOrUrl, title};
     }
-    const preview = document.getElementById('songPreview');
-    preview.innerHTML = `<p class="small">נבחר: ${title}</p>`;
+    document.getElementById('songPreview').innerHTML = `<p class="small">✅ נבחר: ${title}</p>`;
 }
 
 /* ====================  תצוגת הודעה מותאמת ==================== */
@@ -227,6 +238,11 @@ function updateMsgPreview(){
     document.getElementById('messagePreview').textContent = out;
 }
 
+/* ====================  בקרת עוצמה ==================== */
+document.getElementById('volume').addEventListener('input', e=>{
+    document.getElementById('volumeDisplay').textContent = e.target.value + '%';
+});
+
 /* ====================  הוספת תזכורת ==================== */
 document.getElementById('addBtn').addEventListener('click', addReminder);
 function addReminder(){
@@ -234,6 +250,7 @@ function addReminder(){
     const timeStr = document.getElementById('time').value;
     const msgRaw  = document.getElementById('msg').value.trim();
     const style   = document.getElementById('msgStyle').value;
+    const volume  = document.getElementById('volume').value;
     const start   = toSec(document.getElementById('startSec').value);
     const end     = toSec(document.getElementById('endSec').value);
 
@@ -241,15 +258,10 @@ function addReminder(){
         alert('הכנס שם וזמן.');
         return;
     }
-    if(!selectedSong){
-        alert('בחר שיר או הדבק קישור MP3.');
-        return;
-    }
 
     const now = new Date();
     const [h,m] = timeStr.split(':').map(Number);
     const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-    // אם הזמן כבר עבר היום – קבע ליום הבא
     if(target <= now) target.setDate(target.getDate()+1);
     const delay = target.getTime() - now.getTime();
 
@@ -262,6 +274,7 @@ function addReminder(){
         song: selectedSong,
         start,
         end,
+        volume: parseInt(volume),
         active:true
     };
     reminders.push(reminder);
@@ -287,7 +300,8 @@ function renderList(){
         <div class="small" style="margin:.6rem 0; padding:.6rem; background:#3a3a5a; border-radius:var(--radius);">
             <b>${r.title}</b> – ${new Date(r.target).toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'})}
             <br>הודעה: ${r.msg}
-            <br>שיר: ${r.song.title}
+            <br>שיר: ${r.song ? r.song.title : 'ללא'}
+            <br>עוצמה: ${r.volume}%
             <br><button class="small" onclick="deleteReminder(${r.id})">🗑️ מחק</button>
         </div>
     `).join('');
@@ -311,13 +325,13 @@ function clearForm(){
     document.getElementById('messagePreview').innerHTML='';
     document.getElementById('startSec').value='';
     document.getElementById('endSec').value='';
+    document.getElementById('volume').value='70';
+    document.getElementById('volumeDisplay').textContent='70%';
     selectedSong=null;
 }
 
 /* ====================  תזמון התראה ==================== */
 function schedule(rem, delay){
-    // אם הדפדפן סגור – נשתמש ב‑setTimeout רק בזמן פתוח.
-    // במצב של GitHub Pages זה מספיק.
     setTimeout(()=>showNotification(rem), delay);
 }
 
@@ -325,7 +339,12 @@ function schedule(rem, delay){
 async function showNotification(rem){
     // 1️⃣ בקשת הרשאה (מתבצעת רק בפעם הראשונה)
     if(Notification.permission!=='granted'){
-        await Notification.requestPermission();
+        try{
+            await Notification.requestPermission();
+        }catch(e){
+            alert('הרשאה להתראות נדחתה – התזכורת לא תופיע.');
+            return;
+        }
     }
 
     // 2️⃣ יצירת ההתראה
@@ -336,18 +355,19 @@ async function showNotification(rem){
 
     // 3️⃣ נגן את השיר (או קטע ממנו)
     const audio = new Audio();
-    if(rem.song.type==='url'){
-        audio.src = rem.song.url;
-    }else{
-        // YouTube embed – נשתמש ב‑YouTube Iframe API כדי לקבל קובץ MP3?
-        // הפתרון הפשוט: נשתמש ב‑youtube-nocookie.com עם autoplay ו‑start/end
-        const start = rem.start||0;
-        const end   = rem.end||0;
-        const src = `https://www.youtube.com/embed/${rem.song.id}?autoplay=1&start=${start}&end=${end}&controls=0`;
-        audio.src = src; // זה יפעל רק במכשירי מובייל עם אפשרות autoplay
+    if(rem.song){
+        if(rem.song.type==='url'){
+            audio.src = rem.song.url;
+        }else{
+            // YouTube embed – נשתמש בקישור ישיר (אם יש)
+            audio.src = `https://www.youtube.com/watch?v=${rem.song.id}`;
+        }
+        audio.volume = rem.volume / 100;
+        audio.currentTime = rem.start || 0;
+        if(rem.end) audio.currentTime = rem.start; // נגן מההתחלה
+        audio.loop = false;
+        audio.play().catch(()=>{}); // במידה שהדפדפן חוסם autoplay
     }
-    audio.volume = 0.7;
-    audio.play().catch(()=>{}); // במידה שהדפדפן חוסם autoplay
 
     // 4️⃣ כפתור "הבנתי" – סוגר את ההתראה
     notif.onclick = ()=>{ notif.close(); audio.pause(); };
