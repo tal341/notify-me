@@ -2,250 +2,444 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>⏰ תזכורות פשוטות</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://img.icons8.com/ios-filled/50/000000/alarm.png">
-
+    <title>⏰ תזכורות פשוטות</title>
     <style>
-        :root {
-            --bg: #1e1e2f;
-            --card: #2a2a3d;
-            --accent: #00ff88;
-            --text: #e0e0ff;
-            --radius: 12px;
-            --shadow: 0 4px 12px rgba(0,0,0,.4);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: system-ui, Arial, Helvetica, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 2rem 1rem;
+            padding: 20px;
         }
+
         .container {
-            width: 100%;
-            max-width: 560px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
+
         h1 {
-            font-size: 2.2rem;
             text-align: center;
-            margin-bottom: 1rem;
-            color: var(--accent);
+            margin-bottom: 30px;
+            font-size: 2.5em;
         }
+
         .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
         input, select, textarea, button {
             width: 100%;
-            font-size: 1rem;
-            padding: .8rem 1rem;
-            margin-top: .5rem;
+            padding: 12px;
+            margin: 8px 0;
             border: none;
-            border-radius: var(--radius);
+            border-radius: 10px;
+            font-size: 16px;
         }
+
         input, select, textarea {
-            background: #3a3a5a;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.9);
         }
+
         button {
-            background: var(--accent);
-            color: #000;
+            background: #4CAF50;
+            color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: transform .1s;
+            transition: all 0.3s;
         }
-        button:hover { transform: scale(1.02); }
-        button:active { transform: scale(.98); }
-        .small { font-size: .9rem; }
-        .mt { margin-top: 1rem; }
-        .center { text-align: center; }
-        #messagePreview {
-            margin-top: .8rem;
-            padding: .6rem;
-            background: #3a3a5a;
-            border-radius: var(--radius);
-            font-style: italic;
+
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
         }
-        @media (max-width: 480px) {
-            h1 { font-size: 1.8rem; }
+
+        .sound-option {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sound-option:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .sound-option.selected {
+            background: #4CAF50;
+        }
+
+        .reminder-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            text-align: center;
+            display: none;
+        }
+
+        .notification button {
+            margin: 10px 5px;
+            width: auto;
+            padding: 8px 15px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-control input {
+            flex: 1;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>⏰ תזכורות פשוטות</h1>
-
+        
         <div class="card">
-            <h2 class="small">🗒️ שם & זמן</h2>
-            <input id="title" type="text" placeholder="שם התזכורת (לדוגמה: לקחת תרופה)" required>
-            <input id="time" type="time" required>
-
-            <h2 class="small mt">💬 הודעה מותאמת</h2>
-            <textarea id="msg" rows="2" placeholder="הודעה שתופיע (אם ריק – נוצרה הודעה אוטומטית)"></textarea>
-            <select id="msgStyle" class="small">
-                <option value="normal">רגילה</option>
-                <option value="funny">הומוריסטית</option>
-                <option value="motiv">מעודדת</option>
-            </select>
-            <div id="messagePreview"></div>
-
-            <h2 class="small mt">🔊 ווליום</h2>
-            <input type="range" id="volume" min="0" max="100" value="70" class="small">
-            <div class="small">עוצמה: <span id="volDisplay">70%</span></div>
-
-            <button id="addBtn" class="mt">✨ הוסף תזכורת</button>
+            <h2>➕ תזכורת חדשה</h2>
+            <input type="text" id="reminderName" placeholder="שם התזכורת (חובה)" required>
+            <input type="time" id="reminderTime" required>
+            <input type="date" id="reminderDate" required>
+            
+            <h3>🔊 צליל התראה (אופציונלי)</h3>
+            <div id="soundOptions">
+                <div class="sound-option" data-sound="none">❌ ללא צליל</div>
+                <div class="sound-option" data-sound="bell">🔔 פעמון</div>
+                <div class="sound-option" data-sound="beep">📢 צפצוף</div>
+                <div class="sound-option" data-sound="chime">🎵 נעימה</div>
+            </div>
+            
+            <div id="customSoundSection" style="display: none;">
+                <h3>🎵 קישור לצליל מותאם</h3>
+                <input type="url" id="customSoundUrl" placeholder="https://example.com/sound.mp3">
+                <button onclick="testCustomSound()">▶️ נסה צליל</button>
+            </div>
+            
+            <button onclick="toggleCustomSound()">🎵 הוסף צליל מותאם</button>
+            
+            <h3>💬 הודעה (אופציונלי)</h3>
+            <textarea id="reminderMessage" placeholder="הודעה שתופיע בהתראה..."></textarea>
+            
+            <h3>🔊 עוצמת צליל</h3>
+            <div class="volume-control">
+                <span>🔈</span>
+                <input type="range" id="volume" min="0" max="100" value="70">
+                <span>🔊</span>
+                <span id="volumeValue">70%</span>
+            </div>
+            
+            <button onclick="addReminder()" style="background: #2196F3;">✨ הוסף תזכורת</button>
         </div>
-
+        
         <div class="card">
-            <h2 class="small">📋 תזכורות פעילות</h2>
-            <div id="list"></div>
+            <h2>📋 התזכורות שלי</h2>
+            <div id="remindersList"></div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    <div class="notification" id="notification">
+        <h2 id="notificationTitle">⏰ תזכורת!</h2>
+        <p id="notificationMessage"></p>
+        <audio id="notificationSound"></audio>
+        <div>
+            <button onclick="closeNotification()" style="background: #4CAF50;">✅ הבנתי</button>
+            <button onclick="snoozeReminder()" style="background: #FF9800;">😴 דחה 5 דקות</button>
         </div>
     </div>
 
-    <!-- צליל ברירת מחדל (MP3 קצר) -->
-    <audio id="defaultSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
-
     <script>
-        const STORAGE_KEY = 'simpleReminders';
-        let reminders = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        // צלילים מובנים - קישורים ישירים שתמיד עובדים
+        const sounds = {
+            'none': null,
+            'bell': 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
+            'beep': 'https://assets.mixkit.co/active_storage/sfx/2871/2871-preview.mp3',
+            'chime': 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'
+        };
 
-        function generateMessage(title, style) {
-            const base = `היי! הגיע הזמן ל-${title}.`;
-            if (style === 'funny') return `${base} 😆 אל תתן לשעון לשקר אותך!`;
-            if (style === 'motiv') return `${base} 💪 תזכור – כל צעד קטן מוביל להצלחה!`;
-            return base;
+        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+        let selectedSound = 'none';
+        let currentReminderId = null;
+
+        // אתחול
+        window.onload = function() {
+            renderReminders();
+            updateVolumeDisplay();
+            checkReminders();
+            setInterval(checkReminders, 1000);
+            
+            // הגדרת אירועים
+            document.getElementById('volume').addEventListener('input', updateVolumeDisplay);
+            
+            // בקשת הרשאות להתראות
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            
+            // בחירת צליל מובנה
+            document.querySelectorAll('.sound-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.sound-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedSound = this.getAttribute('data-sound');
+                    
+                    // נגן צליל לדוגמה (אם לא "ללא צליל")
+                    if (selectedSound !== 'none') {
+                        const audio = new Audio(sounds[selectedSound]);
+                        audio.volume = document.getElementById('volume').value / 100;
+                        audio.play().catch(e => console.log("לא ניתן לנגן צליל: ", e));
+                    }
+                });
+            });
+            
+            // בחירת צליל ראשוני
+            document.querySelector('.sound-option').click();
+        };
+
+        function updateVolumeDisplay() {
+            document.getElementById('volumeValue').textContent = document.getElementById('volume').value + '%';
         }
 
-        document.getElementById('msg').addEventListener('input', updateMsgPreview);
-        document.getElementById('msgStyle').addEventListener('change', updateMsgPreview);
-        document.getElementById('volume').addEventListener('input', () => {
-            document.getElementById('volDisplay').textContent = document.getElementById('volume').value + '%';
-        });
-
-        function updateMsgPreview() {
-            const txt = document.getElementById('msg').value.trim();
-            const style = document.getElementById('msgStyle').value;
-            const title = document.getElementById('title').value.trim() || 'התזכורת';
-            const out = txt || generateMessage(title, style);
-            document.getElementById('messagePreview').textContent = out;
+        function toggleCustomSound() {
+            const section = document.getElementById('customSoundSection');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                selectedSound = 'custom';
+            } else {
+                section.style.display = 'none';
+                selectedSound = 'none';
+                document.querySelector('.sound-option[data-sound="none"]').click();
+            }
         }
 
-        document.getElementById('addBtn').addEventListener('click', () => {
-            const title = document.getElementById('title').value.trim();
-            const timeStr = document.getElementById('time').value;
-            const msgRaw = document.getElementById('msg').value.trim();
-            const style = document.getElementById('msgStyle').value;
+        function testCustomSound() {
+            const url = document.getElementById('customSoundUrl').value;
+            if (!url) {
+                alert('נא להכניס קישור לצליל');
+                return;
+            }
+            
+            const audio = new Audio(url);
+            audio.volume = document.getElementById('volume').value / 100;
+            audio.play().catch(e => {
+                alert('לא ניתן לנגן את הקובץ. ודא שהקישור תקין ושהוא קובץ אודיו (MP3, WAV, וכו׳)');
+            });
+        }
+
+        function addReminder() {
+            const name = document.getElementById('reminderName').value;
+            const time = document.getElementById('reminderTime').value;
+            const date = document.getElementById('reminderDate').value;
+            const message = document.getElementById('reminderMessage').value;
             const volume = document.getElementById('volume').value;
+            const customUrl = document.getElementById('customSoundUrl').value;
 
-            if (!title || !timeStr) {
-                alert('הכנס שם וזמן.');
+            if (!name || !time || !date) {
+                alert('נא למלא שם, שעה ותאריך');
                 return;
             }
 
-            const now = new Date();
-            const [h, m] = timeStr.split(':').map(Number);
-            const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-            if (target <= now) target.setDate(target.getDate() + 1);
-            const delay = target.getTime() - now.getTime();
-
             const reminder = {
                 id: Date.now(),
-                title,
-                time: timeStr,
-                target: target.getTime(),
-                msg: msgRaw || generateMessage(title, style),
+                name,
+                time,
+                date,
+                message: message || `זמן ל: ${name}`,
+                sound: selectedSound === 'custom' ? customUrl : sounds[selectedSound],
                 volume,
                 active: true
             };
 
             reminders.push(reminder);
             saveReminders();
-            renderList();
-            schedule(reminder, delay);
+            renderReminders();
             clearForm();
-        });
-
-        function saveReminders() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
+            
+            // אנימציה של הצלחה
+            const button = document.querySelector('button[onclick="addReminder()"]');
+            button.textContent = '✅ נוסף!';
+            setTimeout(() => {
+                button.textContent = '✨ הוסף תזכורת';
+            }, 2000);
         }
 
-        function renderList() {
-            const list = document.getElementById('list');
+        function renderReminders() {
+            const list = document.getElementById('remindersList');
+            
             if (reminders.length === 0) {
-                list.innerHTML = '<p class="small">אין תזכורות פעילות.</p>';
+                list.innerHTML = '<p>אין תזכורות פעילות. הוסף תזכורת חדשה!</p>';
                 return;
             }
-            list.innerHTML = reminders.map(r => `
-                <div class="small" style="margin:.6rem 0; padding:.6rem; background:#3a3a5a; border-radius:var(--radius);">
-                    <b>${r.title}</b> – ${new Date(r.target).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
-                    <br>הודעה: ${r.msg}
-                    <br><button class="small" onclick="deleteReminder(${r.id})">🗑️ מחק</button>
+            
+            // מיון לפי תאריך ושעה
+            const sortedReminders = [...reminders].sort((a, b) => {
+                const dateA = new Date(a.date + 'T' + a.time);
+                const dateB = new Date(b.date + 'T' + b.time);
+                return dateA - dateB;
+            });
+            
+            list.innerHTML = sortedReminders.map(reminder => `
+                <div class="reminder-item">
+                    <h3>${reminder.name}</h3>
+                    <p>📅 ${new Date(reminder.date).toLocaleDateString('he-IL')} ⏰ ${reminder.time}</p>
+                    <p>💬 ${reminder.message}</p>
+                    <p>🔊 עוצמה: ${reminder.volume}%</p>
+                    <button onclick="testReminder(${reminder.id})" style="background: #FF9800; margin-right: 5px;">▶️ נסה</button>
+                    <button onclick="deleteReminder(${reminder.id})" style="background: #f44336;">🗑️ מחק</button>
                 </div>
             `).join('');
         }
 
+        function testReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                showNotification(reminder);
+            }
+        }
+
         function deleteReminder(id) {
-            reminders = reminders.filter(r => r.id !== id);
-            saveReminders();
-            renderList();
+            if (confirm('האם אתה בטוח שברצונך למחוק תזכורת זו?')) {
+                reminders = reminders.filter(r => r.id !== id);
+                saveReminders();
+                renderReminders();
+            }
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            const currentTime = now.toTimeString().slice(0, 5);
+            const currentDate = now.toISOString().split('T')[0];
+
+            reminders.forEach(reminder => {
+                if (reminder.active && reminder.date === currentDate && reminder.time === currentTime) {
+                    showNotification(reminder);
+                    reminder.active = false;
+                    saveReminders();
+                    renderReminders();
+                }
+            });
+        }
+
+        function showNotification(reminder) {
+            currentReminderId = reminder.id;
+            
+            document.getElementById('notificationTitle').textContent = '⏰ ' + reminder.name;
+            document.getElementById('notificationMessage').textContent = reminder.message;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('notification').style.display = 'block';
+
+            // נגן צליל אם יש
+            if (reminder.sound) {
+                const audio = document.getElementById('notificationSound');
+                audio.src = reminder.sound;
+                audio.volume = reminder.volume / 100;
+                audio.loop = true;
+                audio.play().catch(e => console.log("לא ניתן לנגן צליל: ", e));
+            }
+
+            // הודעת דפדפן
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(reminder.name, {
+                    body: reminder.message,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏰</text></svg>'
+                });
+            }
+        }
+
+        function closeNotification() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('notification').style.display = 'none';
+            document.getElementById('notificationSound').pause();
+            currentReminderId = null;
+        }
+
+        function snoozeReminder() {
+            if (currentReminderId) {
+                const reminder = reminders.find(r => r.id === currentReminderId);
+                if (reminder) {
+                    const now = new Date();
+                    now.setMinutes(now.getMinutes() + 5);
+                    reminder.time = now.toTimeString().slice(0, 5);
+                    reminder.active = true;
+                    saveReminders();
+                    renderReminders();
+                }
+            }
+            closeNotification();
+        }
+
+        function saveReminders() {
+            localStorage.setItem('reminders', JSON.stringify(reminders));
         }
 
         function clearForm() {
-            document.getElementById('title').value = '';
-            document.getElementById('time').value = '';
-            document.getElementById('msg').value = '';
-            document.getElementById('msgStyle').value = 'normal';
-            document.getElementById('messagePreview').textContent = '';
-            document.getElementById('volume').value = 70;
-            document.getElementById('volDisplay').textContent = '70%';
+            document.getElementById('reminderName').value = '';
+            document.getElementById('reminderMessage').value = '';
+            // שמור את השעה והתאריך הנוכחיים
+            const now = new Date();
+            document.getElementById('reminderTime').value = now.toTimeString().slice(0, 5);
+            document.getElementById('reminderDate').value = now.toISOString().split('T')[0];
         }
-
-        function schedule(rem, delay) {
-            setTimeout(() => showNotification(rem), delay);
-        }
-
-        async function showNotification(rem) {
-            // 1️⃣ בקשת הרשאה (מתבצעת רק בפעם הראשונה)
-            if (Notification.permission !== 'granted') {
-                await Notification.requestPermission();
-            }
-
-            // 2️⃣ יצירת ההתראה
-            const notif = new Notification(rem.title, {
-                body: rem.msg,
-                icon: 'https://img.icons8.com/ios-filled/50/000000/alarm.png'
-            });
-
-            // 3️⃣ נגן צליל ברירת מחדל
-            const audio = document.getElementById('defaultSound').cloneNode();
-            audio.volume = rem.volume / 100;
-            audio.play().catch(() => {}); // במידה שהדפדפן חוסם autoplay
-
-            // 4️⃣ כפתור "הבנתי" – סוגר את ההתראה
-            notif.onclick = () => { notif.close(); audio.pause(); };
-        }
-
-        function init() {
-            // אם יש תזכורות שמיועדות לעתיד – נזמן אותן מחדש
-            const now = Date.now();
-            reminders.forEach(r => {
-                if (r.active && r.target > now) {
-                    schedule(r, r.target - now);
-                }
-            });
-            renderList();
-        }
-
-        init();
     </script>
 </body>
 </html>
