@@ -1,393 +1,345 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>⏰ תזכורות חכמות – פשוט ונוח</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="https://img.icons8.com/ios-filled/50/000000/alarm.png">
+    <meta charset="UTF-8">
+    <title>⏰ תזכורות חכמות</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/000000/alarm.png">
 
-<!-- ==== עיצוב מודרני ונקי ==== -->
-<style>
-:root{
-    --bg:#1e1e2f;          /* רקע כהה */
-    --card:#2a2a3d;        /* כרטיסים */
-    --accent:#00ff88;      /* צבע מודגש */
-    --text:#e0e0ff;        /* טקסט */
-    --radius:12px;
-    --shadow:0 4px 12px rgba(0,0,0,.4);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-    font-family:system-ui,Arial,Helvetica,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    line-height:1.5;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:2rem 1rem;
-}
-.container{
-    width:100%;
-    max-width:560px;
-}
-h1{
-    font-size:2.2rem;
-    text-align:center;
-    margin-bottom:1rem;
-    color:var(--accent);
-}
-.card{
-    background:var(--card);
-    border-radius:var(--radius);
-    padding:1.5rem;
-    margin-bottom:1.5rem;
-    box-shadow:var(--shadow);
-}
-input,select,textarea,button{
-    width:100%;
-    font-size:1rem;
-    padding:.8rem 1rem;
-    margin-top:.5rem;
-    border:none;
-    border-radius:var(--radius);
-}
-input,select,textarea{
-    background:#3a3a5a;
-    color:#fff;
-}
-button{
-    background:var(--accent);
-    color:#000;
-    font-weight:bold;
-    cursor:pointer;
-    transition:transform .1s;
-}
-button:hover{transform:scale(1.02);}
-button:active{transform:scale(.98);}
-.small{font-size:.9rem;}
-.mt{margin-top:1rem;}
-.center{text-align:center;}
-#songPreview{
-    margin-top:.8rem;
-    text-align:center;
-}
-#songPreview audio{
-    width:100%;
-    margin-top:.4rem;
-}
-#messagePreview{
-    margin-top:.8rem;
-    padding:.6rem;
-    background:#3a3a5a;
-    border-radius:var(--radius);
-    font-style:italic;
-}
-.volume-control{
-    display:flex;
-    align-items:center;
-    gap:.5rem;
-    margin-top:.5rem;
-}
-.volume-control input[type="range"]{
-    flex:1;
-}
-.optional{color:#aaa;}
-
-@media (max-width:480px){
-    h1{font-size:1.8rem;}
-}
-</style>
+    <style>
+        :root {
+            --bg: #1e1e2f;
+            --card: #2a2a3d;
+            --accent: #00ff88;
+            --text: #e0e0ff;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0,0,0,.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 1rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 560px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        input, select, textarea, button {
+            width: 100%;
+            font-size: 1rem;
+            padding: .8rem 1rem;
+            margin-top: .5rem;
+            border: none;
+            border-radius: var(--radius);
+        }
+        input, select, textarea {
+            background: #3a3a5a;
+            color: #fff;
+        }
+        button {
+            background: var(--accent);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform .1s;
+        }
+        button:hover { transform: scale(1.02); }
+        button:active { transform: scale(.98); }
+        .small { font-size: .9rem; }
+        .mt { margin-top: 1rem; }
+        .center { text-align: center; }
+        #songPreview {
+            margin-top: .8rem;
+            text-align: center;
+        }
+        #songPreview audio {
+            width: 100%;
+            margin-top: .4rem;
+        }
+        #messagePreview {
+            margin-top: .8rem;
+            padding: .6rem;
+            background: #3a3a5a;
+            border-radius: var(--radius);
+            font-style: italic;
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
-
 <body>
-<div class="container">
+    <div class="container">
+        <h1>⏰ תזכורות חכמות</h1>
 
-    <h1>⏰ תזכורות חכמות</h1>
+        <div class="card">
+            <h2 class="small">🗒️ שם & זמן</h2>
+            <input id="title" type="text" placeholder="שם התזכורת (לדוגמה: לקחת תרופה)" required>
+            <input id="time" type="time" required>
 
-    <!-- ====================  טופס יצירת תזכורת ==================== -->
-    <div class="card">
-        <h2 class="small">🗒️ שם & זמן</h2>
-        <input id="title" type="text" placeholder="שם התזכורת (חובה)" required>
-        <input id="time" type="time" required>
+            <h2 class="small mt">🎵 שיר (אופציונלי)</h2>
+            <label><input type="checkbox" id="useSong"> יש שיר מותאם</label>
+            <div id="songContainer" style="display: none;">
+                <input id="songQuery" type="text" placeholder="חפש ביוטיוב או הדבק קישור MP3">
+                <button id="searchBtn" class="small">🔎 חפש שיר</button>
+                <div id="songPreview"></div>
+                <div class="small mt">בחר קטע (mm:ss)</div>
+                <input id="startSec" type="text" placeholder="התחלה (mm:ss)" class="small">
+                <input id="endSec" type="text" placeholder="סיום (mm:ss)" class="small">
+            </div>
 
-        <h2 class="small mt">🎵 שיר (אופציונלי)</h2>
-        <input id="songQuery" type="text" placeholder="חפש בי-טוב או הדבק קישור MP3">
-        <button id="searchBtn" class="small">🔎 חפש שיר</button>
-        <div id="songPreview"></div>
+            <h2 class="small mt">💬 הודעה מותאמת</h2>
+            <textarea id="msg" rows="2" placeholder="הודעה שתופיע (אם ריק – נוצרה הודעה אוטומטית)"></textarea>
+            <select id="msgStyle" class="small">
+                <option value="normal">רגילה</option>
+                <option value="funny">הומוריסטית</option>
+                <option value="motiv">מעודדת</option>
+            </select>
+            <div id="messagePreview"></div>
 
-        <h2 class="small mt optional">⏱️ קטע מהשיר (אופציונלי)</h2>
-        <div class="small optional">הזנת זמן בפורמט mm:ss (לדוגמה 00:30)</div>
-        <input id="startSec" type="text" placeholder="התחלה (mm:ss)" class="small">
-        <input id="endSec"   type="text" placeholder="סיום (mm:ss)" class="small">
+            <h2 class="small mt">🔊 ווליום</h2>
+            <input type="range" id="volume" min="0" max="100" value="70" class="small">
+            <div class="small">עוצמה: <span id="volDisplay">70%</span></div>
 
-        <h2 class="small mt">💬 הודעה (אופציונלי)</h2>
-        <textarea id="msg" rows="2" placeholder="הודעה שתופיע (אם ריק – נוצרה הודעה אוטומטית)"></textarea>
-        <select id="msgStyle" class="small">
-            <option value="normal">רגילה</option>
-            <option value="funny">הומוריסטית</option>
-            <option value="motiv">מעודדת</option>
-        </select>
-        <div id="messagePreview"></div>
-
-        <h2 class="small mt">🔊 עוצמת צליל (אופציונלי)</h2>
-        <div class="volume-control">
-            <span>🔈</span>
-            <input type="range" id="volume" min="0" max="100" value="70">
-            <span>🔊</span>
-            <span id="volumeDisplay">70%</span>
+            <button id="addBtn" class="mt">✨ הוסף תזכורת</button>
         </div>
 
-        <button id="addBtn" class="mt">✨ הוסף תזכורת</button>
-    </div>
-
-    <!-- ====================  רשימת תזכורות ==================== -->
-    <div class="card">
-        <h2 class="small">📋 תזכורות פעילות</h2>
-        <div id="list"></div>
-    </div>
-
-</div>
-
-<!-- ==== קוד JavaScript ==== -->
-<script>
-/* ====================  קבועים והגדרות ==================== */
-const STORAGE_KEY = 'smartReminders';
-let reminders = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-let selectedSong = null;   // {type:'yt'|'url'|null, id:..., title:...}
-
-/* ====================  עזרי זמן ==================== */
-function toSec(str){                     // "mm:ss" → שניות
-    if(!str) return 0;
-    const [m,s] = str.split(':').map(Number);
-    return (isNaN(m)?0:m)*60 + (isNaN(s)?0:s);
-}
-function toMMSS(sec){
-    const m = Math.floor(sec/60).toString().padStart(2,'0');
-    const s = (sec%60).toString().padStart(2,'0');
-    return `${m}:${s}`;
-}
-
-/* ====================  הודעות AI (פשוט) ==================== */
-function generateMessage(title, style){
-    const base = `היי! הגיע הזמן ל‑${title}.`;
-    if(style==='funny')   return `${base} 😆 אל תתן לשעון לשקר אותך!`;
-    if(style==='motiv')   return `${base} 💪 תזכור – כל צעד קטן מוביל להצלחה!`;
-    return base; // normal
-}
-
-/* ====================  חיפוש שיר (אופציונלי) ==================== */
-function searchYouTube(query){
-    // ללא API – נציג קישור ישירות למשתמש
-    const preview = document.getElementById('songPreview');
-    preview.innerHTML = `
-        <p class="small">אין API – <b>הדבק קישור MP3 ישירות</b> או השאר ריק.</p>
-        <button class="small" onclick="selectSong(null)">🚫 ללא שיר</button>
-    `;
-}
-
-/* ====================  הצגת תוצאות חיפוש ==================== */
-function handleSearch(){
-    const q = document.getElementById('songQuery').value.trim();
-    if(!q) return searchYouTube(q);
-    
-    const preview = document.getElementById('songPreview');
-    preview.innerHTML = '<p class="small">טוען…</p>';
-
-    // אם הקישור הוא MP3 ישיר – נציג ישירות
-    if(q.match(/\.(mp3|wav|ogg)(\?.*)?$/i)){
-        preview.innerHTML = `
-            <audio controls src="${q}"></audio>
-            <button class="small" onclick="selectSong('${q}','קובץ MP3')">בחר קובץ זה</button>
-            <button class="small" onclick="selectSong(null)">🚫 ללא שיר</button>
-        `;
-        return;
-    }
-
-    // אם לא – נציג קישור YouTube
-    preview.innerHTML = `
-        <p class="small">לא ניתן לחפש ללא API – <b>הדבק קישור MP3</b></p>
-        <button class="small" onclick="selectSong(null)">🚫 ללא שיר</button>
-    `;
-}
-
-/* ====================  בחירת שיר (כולל ללא שיר) ==================== */
-function selectSong(idOrUrl, title){
-    if(idOrUrl === null){
-        selectedSong = null;
-        document.getElementById('songPreview').innerHTML = '<p class="small">✅ לא נבחר שיר</p>';
-        return;
-    }
-    if(idOrUrl.startsWith('http')){ // MP3 url
-        selectedSong = {type:'url', url:idOrUrl, title};
-    }else{ // YouTube id
-        selectedSong = {type:'yt', id:idOrUrl, title};
-    }
-    document.getElementById('songPreview').innerHTML = `<p class="small">✅ נבחר: ${title}</p>`;
-}
-
-/* ====================  תצוגת הודעה מותאמת ==================== */
-document.getElementById('msg').addEventListener('input', updateMsgPreview);
-document.getElementById('msgStyle').addEventListener('change', updateMsgPreview);
-function updateMsgPreview(){
-    const txt = document.getElementById('msg').value.trim();
-    const style = document.getElementById('msgStyle').value;
-    const title = document.getElementById('title').value.trim()||'התזכורת';
-    const out = txt || generateMessage(title, style);
-    document.getElementById('messagePreview').textContent = out;
-}
-
-/* ====================  בקרת עוצמה ==================== */
-document.getElementById('volume').addEventListener('input', e=>{
-    document.getElementById('volumeDisplay').textContent = e.target.value + '%';
-});
-
-/* ====================  הוספת תזכורת ==================== */
-document.getElementById('addBtn').addEventListener('click', addReminder);
-function addReminder(){
-    const title   = document.getElementById('title').value.trim();
-    const timeStr = document.getElementById('time').value;
-    const msgRaw  = document.getElementById('msg').value.trim();
-    const style   = document.getElementById('msgStyle').value;
-    const volume  = document.getElementById('volume').value;
-    const start   = toSec(document.getElementById('startSec').value);
-    const end     = toSec(document.getElementById('endSec').value);
-
-    if(!title || !timeStr){
-        alert('הכנס שם וזמן.');
-        return;
-    }
-
-    const now = new Date();
-    const [h,m] = timeStr.split(':').map(Number);
-    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-    if(target <= now) target.setDate(target.getDate()+1);
-    const delay = target.getTime() - now.getTime();
-
-    const reminder = {
-        id: Date.now(),
-        title,
-        time: timeStr,
-        target: target.getTime(),
-        msg: msgRaw || generateMessage(title, style),
-        song: selectedSong,
-        start,
-        end,
-        volume: parseInt(volume),
-        active:true
-    };
-    reminders.push(reminder);
-    saveReminders();
-    renderList();
-    schedule(reminder, delay);
-    clearForm();
-}
-
-/* ====================  שמירת/טעינת תזכורות ==================== */
-function saveReminders(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
-}
-
-/* ====================  רינדור רשימת תזכורות ==================== */
-function renderList(){
-    const list = document.getElementById('list');
-    if(reminders.length===0){
-        list.innerHTML = '<p class="small">אין תזכורות פעילות.</p>';
-        return;
-    }
-    list.innerHTML = reminders.map(r=>`
-        <div class="small" style="margin:.6rem 0; padding:.6rem; background:#3a3a5a; border-radius:var(--radius);">
-            <b>${r.title}</b> – ${new Date(r.target).toLocaleTimeString('he-IL', {hour:'2-digit',minute:'2-digit'})}
-            <br>הודעה: ${r.msg}
-            <br>שיר: ${r.song ? r.song.title : 'ללא'}
-            <br>עוצמה: ${r.volume}%
-            <br><button class="small" onclick="deleteReminder(${r.id})">🗑️ מחק</button>
+        <div class="card">
+            <h2 class="small">📋 תזכורות פעילות</h2>
+            <div id="list"></div>
         </div>
-    `).join('');
-}
+    </div>
 
-/* ====================  מחיקת תזכורת ==================== */
-function deleteReminder(id){
-    reminders = reminders.filter(r=>r.id!==id);
-    saveReminders();
-    renderList();
-}
+    <script>
+        const YT_API_KEY = ''; // הכנס כאן מפתח YouTube API (חינם) אם תרצה חיפוש אמיתי
+        const STORAGE_KEY = 'smartReminders';
+        let reminders = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-/* ====================  ניקוי טופס ==================== */
-function clearForm(){
-    document.getElementById('title').value='';
-    document.getElementById('time').value='';
-    document.getElementById('songQuery').value='';
-    document.getElementById('songPreview').innerHTML='';
-    document.getElementById('msg').value='';
-    document.getElementById('msgStyle').value='normal';
-    document.getElementById('messagePreview').innerHTML='';
-    document.getElementById('startSec').value='';
-    document.getElementById('endSec').value='';
-    document.getElementById('volume').value='70';
-    document.getElementById('volumeDisplay').textContent='70%';
-    selectedSong=null;
-}
-
-/* ====================  תזמון התראה ==================== */
-function schedule(rem, delay){
-    setTimeout(()=>showNotification(rem), delay);
-}
-
-/* ====================  הצגת התראה ==================== */
-async function showNotification(rem){
-    // 1️⃣ בקשת הרשאה (מתבצעת רק בפעם הראשונה)
-    if(Notification.permission!=='granted'){
-        try{
-            await Notification.requestPermission();
-        }catch(e){
-            alert('הרשאה להתראות נדחתה – התזכורת לא תופיע.');
-            return;
+        function toSec(str) {
+            const [m, s] = str.split(':').map(Number);
+            return (isNaN(m) ? 0 : m) * 60 + (isNaN(s) ? 0 : s);
         }
-    }
 
-    // 2️⃣ יצירת ההתראה
-    const notif = new Notification(rem.title, {
-        body: rem.msg,
-        icon: 'https://img.icons8.com/ios-filled/50/000000/alarm.png'
-    });
-
-    // 3️⃣ נגן את השיר (או קטע ממנו)
-    const audio = new Audio();
-    if(rem.song){
-        if(rem.song.type==='url'){
-            audio.src = rem.song.url;
-        }else{
-            // YouTube embed – נשתמש בקישור ישיר (אם יש)
-            audio.src = `https://www.youtube.com/watch?v=${rem.song.id}`;
+        function generateMessage(title, style) {
+            const base = `היי! הגיע הזמן ל-${title}.`;
+            if (style === 'funny') return `${base} 😆 אל תתן לשעון לשקר אותך!`;
+            if (style === 'motiv') return `${base} 💪 תזכור – כל צעד קטן מוביל להצלחה!`;
+            return base;
         }
-        audio.volume = rem.volume / 100;
-        audio.currentTime = rem.start || 0;
-        if(rem.end) audio.currentTime = rem.start; // נגן מההתחלה
-        audio.loop = false;
-        audio.play().catch(()=>{}); // במידה שהדפדפן חוסם autoplay
-    }
 
-    // 4️⃣ כפתור "הבנתי" – סוגר את ההתראה
-    notif.onclick = ()=>{ notif.close(); audio.pause(); };
-}
-
-/* ====================  אתחול ראשוני ==================== */
-function init(){
-    // אם יש תזכורות שמיועדות לעתיד – נזמן אותן מחדש
-    const now = Date.now();
-    reminders.forEach(r=>{
-        if(r.active && r.target>now){
-            schedule(r, r.target-now);
+        async function searchYouTube(query) {
+            if (!YT_API_KEY) {
+                alert('אין מפתח YouTube API – חיפוש אינו זמין. ניתן להדביק קישור MP3 ישירות.');
+                return;
+            }
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(query)}&key=${YT_API_KEY}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            return data.items.map(v => ({ id: v.id.videoId, title: v.snippet.title }));
         }
-    });
-    renderList();
-}
-init();
 
-/* ====================  אירועי לחצנים ==================== */
-document.getElementById('searchBtn').addEventListener('click', handleSearch);
-</script>
+        function selectSong(idOrUrl, title) {
+            if (idOrUrl.startsWith('http')) {
+                selectedSong = { type: 'url', url: idOrUrl, title };
+            } else {
+                selectedSong = { type: 'yt', id: idOrUrl, title };
+            }
+            const preview = document.getElementById('songPreview');
+            preview.innerHTML = `<p class="small">נבחר: ${title}</p>`;
+        }
+
+        document.getElementById('useSong').addEventListener('change', () => {
+            const container = document.getElementById('songContainer');
+            container.style.display = document.getElementById('useSong').checked ? 'block' : 'none';
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const q = document.getElementById('songQuery').value.trim();
+            if (!q) return;
+            const preview = document.getElementById('songPreview');
+            preview.innerHTML = '<p class="small">מחפש…</p>';
+
+            if (q.match(/\.(mp3|wav|ogg)(\?.*)?$/i)) {
+                preview.innerHTML = `
+                    <audio controls src="${q}"></audio>
+                    <button class="small" onclick="selectSong('${q}', 'קובץ MP3')">בחר קובץ זה</button>
+                `;
+                return;
+            }
+
+            const results = await searchYouTube(q);
+            if (results.length === 0) {
+                preview.innerHTML = '<p class="small">לא נמצאו תוצאות.</p>';
+                return;
+            }
+            preview.innerHTML = results.map(r => `
+                <div class="small" style="margin:.4rem 0;">
+                    <b>${r.title}</b><br>
+                    <iframe width="100%" height="80" src="https://www.youtube.com/embed/${r.id}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <button class="small" onclick="selectSong('${r.id}','${r.title.replace(/'/g,"\\'")}')">בחר</button>
+                </div>
+            `).join('');
+        });
+
+        document.getElementById('msg').addEventListener('input', updateMsgPreview);
+        document.getElementById('msgStyle').addEventListener('change', updateMsgPreview);
+        document.getElementById('volume').addEventListener('input', () => {
+            document.getElementById('volDisplay').textContent = document.getElementById('volume').value + '%';
+        });
+
+        function updateMsgPreview() {
+            const txt = document.getElementById('msg').value.trim();
+            const style = document.getElementById('msgStyle').value;
+            const title = document.getElementById('title').value.trim() || 'התזכורת';
+            const out = txt || generateMessage(title, style);
+            document.getElementById('messagePreview').textContent = out;
+        }
+
+        document.getElementById('addBtn').addEventListener('click', () => {
+            const title = document.getElementById('title').value.trim();
+            const timeStr = document.getElementById('time').value;
+            const msgRaw = document.getElementById('msg').value.trim();
+            const style = document.getElementById('msgStyle').value;
+            const start = toSec(document.getElementById('startSec').value);
+            const end = toSec(document.getElementById('endSec').value);
+            const useSong = document.getElementById('useSong').checked;
+            const volume = document.getElementById('volume').value;
+
+            if (!title || !timeStr) {
+                alert('הכנס שם וזמן.');
+                return;
+            }
+
+            const now = new Date();
+            const [h, m] = timeStr.split(':').map(Number);
+            const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+            if (target <= now) target.setDate(target.getDate() + 1);
+            const delay = target.getTime() - now.getTime();
+
+            const reminder = {
+                id: Date.now(),
+                title,
+                time: timeStr,
+                target: target.getTime(),
+                msg: msgRaw || generateMessage(title, style),
+                useSong,
+                song: useSong ? selectedSong : null,
+                start,
+                end,
+                volume,
+                active: true
+            };
+
+            reminders.push(reminder);
+            saveReminders();
+            renderList();
+            schedule(reminder, delay);
+            clearForm();
+        });
+
+        function saveReminders() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
+        }
+
+        function renderList() {
+            const list = document.getElementById('list');
+            if (reminders.length === 0) {
+                list.innerHTML = '<p class="small">אין תזכורות פעילות.</p>';
+                return;
+            }
+            list.innerHTML = reminders.map(r => `
+                <div class="small" style="margin:.6rem 0; padding:.6rem; background:#3a3a5a; border-radius:var(--radius);">
+                    <b>${r.title}</b> – ${new Date(r.target).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
+                    <br>הודעה: ${r.msg}
+                    ${r.useSong ? `<br>שיר: ${r.song.title}` : ''}
+                    <br><button class="small" onclick="deleteReminder(${r.id})">🗑️ מחק</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteReminder(id) {
+            reminders = reminders.filter(r => r.id !== id);
+            saveReminders();
+            renderList();
+        }
+
+        function clearForm() {
+            document.getElementById('title').value = '';
+            document.getElementById('time').value = '';
+            document.getElementById('songQuery').value = '';
+            document.getElementById('songPreview').innerHTML = '';
+            document.getElementById('msg').value = '';
+            document.getElementById('msgStyle').value = 'normal';
+            document.getElementById('messagePreview').textContent = '';
+            document.getElementById('startSec').value = '';
+            document.getElementById('endSec').value = '';
+            document.getElementById('useSong').checked = false;
+            document.getElementById('songContainer').style.display = 'none';
+            selectedSong = null;
+        }
+
+        function schedule(rem, delay) {
+            setTimeout(() => showNotification(rem), delay);
+        }
+
+        async function showNotification(rem) {
+            if (Notification.permission !== 'granted') {
+                await Notification.requestPermission();
+            }
+
+            const notif = new Notification(rem.title, {
+                body: rem.msg,
+                icon: 'https://img.icons8.com/ios-filled/50/000000/alarm.png'
+            });
+
+            if (rem.useSong && rem.song) {
+                const audio = new Audio();
+                if (rem.song.type === 'url') {
+                    audio.src = rem.song.url;
+                } else {
+                    const start = rem.start || 0;
+                    const end = rem.end || 0;
+                    const src = `https://www.youtube.com/embed/${rem.song.id}?autoplay=1&start=${start}&end=${end}&controls=0`;
+                    audio.src = src;
+                }
+                audio.volume = rem.volume / 100;
+                audio.play().catch(() => {});
+            }
+
+            notif.onclick = () => { notif.close(); };
+        }
+
+        function init() {
+            const now = Date.now();
+            reminders.forEach(r => {
+                if (r.active && r.target > now) {
+                    schedule(r, r.target - now);
+                }
+            });
+            renderList();
+        }
+
+        init();
+    </script>
 </body>
 </html>
